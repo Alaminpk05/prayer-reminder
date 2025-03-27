@@ -14,6 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
+
     super.initState();
   }
 
@@ -47,8 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, state) {
                 if (state is ApiIntegrationLoadingState) {
                   return Center(child: CircularProgressIndicator.adaptive());
-                }
-                else if (state is ApiIntegrationSuccessState) {
+                } else if (state is ApiIntegrationSuccessState) {
                   final prayerTimes = state.prayerTimes;
                   return SizedBox(
                     height: 120,
@@ -116,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 return SizedBox.shrink();
-                
               },
             ),
           ],

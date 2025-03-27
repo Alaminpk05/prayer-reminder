@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/screens/home.dart';
+import 'package:prayer_reminder/utils/helpers/permission/permission.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Request permissions before running the app
+  await PermissionHelper.checkAndRequestAlarmPermission();
   runApp(const MyApp());
 }
 
