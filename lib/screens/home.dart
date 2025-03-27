@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
-import 'package:prayer_reminder/repository/fetch_time.dart';
+import 'package:prayer_reminder/repository/api/api_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
