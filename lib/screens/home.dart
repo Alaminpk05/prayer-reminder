@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/api/api_services.dart';
+import 'package:prayer_reminder/utils/constant/list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,22 +13,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<PrayerTimes> salatData;
+  late Future<PrayerTimes?> salatData;
+ 
 
   @override
   void initState() {
     salatData = PrayerTimeApiService().fetchPrayerTimes();
+     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
     super.initState();
   }
-
-  // List of prayer names to display
-  final List<Map<String, dynamic>> prayers = [
-    {'name': 'Fajr', 'icon': Icons.nightlight_round},
-    {'name': 'Johor', 'icon': Icons.wb_sunny},
-    {'name': 'Asor', 'icon': Icons.brightness_4},
-    {'name': 'Magrib', 'icon': Icons.brightness_3},
-    {'name': 'Isha', 'icon': Icons.nightlight_round},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            FutureBuilder<PrayerTimes>(
+            FutureBuilder<PrayerTimes?>(
               future: salatData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: const CircularProgressIndicator.adaptive());
+                  return Center(
+                    child: const CircularProgressIndicator.adaptive(),
+                  );
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (!snapshot.hasData) {

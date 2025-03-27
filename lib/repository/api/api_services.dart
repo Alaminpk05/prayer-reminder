@@ -22,23 +22,16 @@ class PrayerTimeApiService {
       },
     );
 
-  Future<PrayerTimes> fetchPrayerTimes() async {
-    try {
-      final response = await _dio.get('/salat/db.json');
+  Future<PrayerTimes?> fetchPrayerTimes() async {
+    final response = await _dio.get('/salat/db.json');
 
-      if (response.statusCode == 200) {
-        final timeData = response.data['time'] as Map<String, dynamic>;
-        debugPrint(timeData.keys.first);
-       
-        debugPrint(timeData.toString());
-        return PrayerTimes.fromJson(timeData);
-      } else {
-        throw Exception('Failed to load prayer times: ${response.statusCode}');
-      }
-    } on DioException catch (e) {
-      throw Exception('Dio error: ${e.message}');
-    } catch (e) {
-      throw Exception('Error: $e');
+    if (response.statusCode == 200) {
+      final timeData = response.data['time'] as Map<String, dynamic>;
+      debugPrint(timeData.keys.first);
+
+      debugPrint(timeData.toString());
+      return PrayerTimes.fromJson(timeData);
     }
+    return null;
   }
 }
