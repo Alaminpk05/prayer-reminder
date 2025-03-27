@@ -11,11 +11,13 @@ class ApiIntegrationBloc
     extends Bloc<ApiIntegrationEvent, ApiIntegrationState> {
   ApiIntegrationBloc() : super(ApiIntegrationInitial()) {
     on<ApiIntegrationEvent>((event, emit) async {
+      emit(ApiIntegrationLoadingState());
       try {
         PrayerTimes? salatDate =
             await PrayerTimeApiService().fetchPrayerTimes();
         emit(ApiIntegrationSuccessState(prayerTimes: salatDate));
       } on DioException catch (e) {
+        
         emit(ApiIntegrationErrorState(errorMessage: e.message.toString()));
       } catch (e) {
         emit(ApiIntegrationErrorState(errorMessage: e.toString()));

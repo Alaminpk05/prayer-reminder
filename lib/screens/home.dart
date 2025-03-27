@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
-import 'package:prayer_reminder/model/prayer_time.dart';
-import 'package:prayer_reminder/repository/api/api_services.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,11 +11,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<PrayerTimes?> salatData;
-
   @override
   void initState() {
-    salatData = PrayerTimeApiService().fetchPrayerTimes();
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
     super.initState();
   }
@@ -42,16 +37,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 20),
             BlocConsumer<ApiIntegrationBloc, ApiIntegrationState>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                if (state is ApiIntegrationLoadingState) {
-                  Center(child: CircularProgressIndicator.adaptive());
-                } else if (state is ApiIntegrationErrorState) {
+              listener: (context, state) {
+                if (state is ApiIntegrationErrorState) {
                   ScaffoldMessenger.of(
                     context,
                   ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
                 }
-                if (state is ApiIntegrationSuccessState) {
+              },
+              builder: (context, state) {
+                if (state is ApiIntegrationLoadingState) {
+                  return Center(child: CircularProgressIndicator.adaptive());
+                }
+                else if (state is ApiIntegrationSuccessState) {
                   final prayerTimes = state.prayerTimes;
                   return SizedBox(
                     height: 120,
@@ -119,22 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 return SizedBox.shrink();
-                // return FutureBuilder<PrayerTimes?>(
-                //   future: salatData,
-                //   builder: (context, snapshot) {
-                //     if (snapshot.connectionState == ConnectionState.waiting) {
-                //       return Center(
-                //         child: const CircularProgressIndicator.adaptive(),
-                //       );
-                //     } else if (snapshot.hasError) {
-                //       return Text('Error: ${snapshot.error}');
-                //     } else if (!snapshot.hasData) {
-                //       return const Text('No prayer times available');
-                //     }
-
-                //     return Container();
-                //   },
-                // );
+                
               },
             ),
           ],
