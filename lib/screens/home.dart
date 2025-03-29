@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_sevices/alarm.dart';
+
 import 'package:prayer_reminder/utils/constant/list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,8 +16,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
-    context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
     super.initState();
+    context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
   }
 
   @override
@@ -26,11 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: BlocConsumer<ApiIntegrationBloc, ApiIntegrationState>(
         listener: (context, state) {
           if (state is ApiIntegrationSuccessState) {
-            _scheduleAlarmsAndShowMessage(context, state.prayerTimes!);
-          } else if (state is ApiIntegrationErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage)),
-            );
+            _scheduleAlarms(state.prayerTimes!);
           }
         },
         builder: (context, state) {
@@ -45,14 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _scheduleAlarmsAndShowMessage(BuildContext context, PrayerTimes prayerTimes) async {
-    await AlarmService.schedulePrayerAlarms(prayerTimes);
+  Future<void> _scheduleAlarms(PrayerTimes prayerTimes) async {
+    final times = {
+      'fajr': prayerTimes.fajr,
+      'johor': prayerTimes.johor,
+      'asor': prayerTimes.asor,
+      'magrib': prayerTimes.magrib,
+      'isha': prayerTimes.isha,
+    };
     
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Prayer alarms scheduled successfully')),
-      );
-    }
+    await AlarmService.schedulePrayerAlarms(times);
+    debugPrint('✅ All prayer alarms scheduled successfully');
   }
 
   Widget _buildPrayerTimesList(PrayerTimes prayerTimes) {
@@ -61,14 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           const Text(
-            'Prayer Alarm',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            'Scheduled Prayer Alarms',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            height: 120,
+          Expanded(
             child: ListView.builder(
-              scrollDirection: Axis.horizontal,
               itemCount: prayers.length,
               itemBuilder: (context, index) => _buildPrayerCard(index, prayerTimes),
             ),
@@ -89,25 +87,12 @@ class _HomeScreenState extends State<HomeScreen> {
       default: time = '--:--';
     }
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        color: Colors.blue,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      width: 100,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(prayers[index]['icon'], color: Colors.white, size: 30),
-          const SizedBox(height: 8),
-          Text(
-            prayers[index]['name']!,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(time, style: const TextStyle(color: Colors.white, fontSize: 16)),
-        ],
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: Icon(prayers[index]['icon'], size: 32),
+        title: Text(prayers[index]['name']!),
+        subtitle: Text(time),
       ),
     );
   }

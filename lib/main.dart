@@ -7,10 +7,13 @@ import 'package:prayer_reminder/utils/helpers/permission/permission.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await PermissionHelper.checkAndRequestAlarmPermission();
   await AlarmService.initialize();
-  
+
+   AlarmService.schedulePrayerAlarms;
+
+
   runApp(const MyApp());
 }
 
@@ -20,9 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => ApiIntegrationBloc()),
-      ],
+      providers: [BlocProvider(create: (context) => ApiIntegrationBloc())],
       child: MaterialApp(
         title: 'Prayer Reminder',
         theme: ThemeData(primarySwatch: Colors.blue),
