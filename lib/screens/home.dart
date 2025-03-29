@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
-import 'package:prayer_reminder/repository/alarm_sevices/alarm.dart';
+import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
 
 import 'package:prayer_reminder/utils/constant/list.dart';
 
