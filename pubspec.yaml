@@ -38,6 +38,7 @@ dependencies:
   alarm: ^5.1.0
   bloc: ^9.0.0
   flutter_bloc: ^9.1.0
+  android_alarm_manager_plus: ^4.0.7
 
 dev_dependencies:
   flutter_test:
