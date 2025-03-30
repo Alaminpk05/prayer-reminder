@@ -1,9 +1,9 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
+
 
 class PrayerTimeApiService {
   final Dio _dio = Dio(
