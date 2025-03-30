@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
+import 'package:prayer_reminder/repository/notification/notification.dart';
 
 import 'package:prayer_reminder/utils/constant/list.dart';
 
@@ -50,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'magrib': prayerTimes.magrib,
       'isha': prayerTimes.isha,
     };
-    
+
     await AlarmService.schedulePrayerAlarms(times);
     debugPrint('✅ All prayer alarms scheduled successfully');
   }
@@ -65,11 +66,25 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
-          Expanded(
-            child: ListView.builder(
-              itemCount: prayers.length,
-              itemBuilder: (context, index) => _buildPrayerCard(index, prayerTimes),
-            ),
+          Column(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: prayers.length,
+                itemBuilder:
+                    (context, index) => _buildPrayerCard(index, prayerTimes),
+              ),
+              SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  NotificationServices.showInstantNotification(
+                    'Instant Notification',
+                    'this is instant notification body',
+                  );
+                },
+                child: Text('send instant notification'),
+              ),
+            ],
           ),
         ],
       ),
@@ -79,12 +94,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildPrayerCard(int index, PrayerTimes prayerTimes) {
     String time;
     switch (index) {
-      case 0: time = "${prayerTimes.fajr} AM"; break;
-      case 1: time = "${prayerTimes.johor} PM"; break;
-      case 2: time = "${prayerTimes.asor} PM"; break;
-      case 3: time = "${prayerTimes.magrib} PM"; break;
-      case 4: time = "${prayerTimes.isha} PM"; break;
-      default: time = '--:--';
+      case 0:
+        time = "${prayerTimes.fajr} AM";
+        break;
+      case 1:
+        time = "${prayerTimes.johor} PM";
+        break;
+      case 2:
+        time = "${prayerTimes.asor} PM";
+        break;
+      case 3:
+        time = "${prayerTimes.magrib} PM";
+        break;
+      case 4:
+        time = "${prayerTimes.isha} PM";
+        break;
+      default:
+        time = '--:--';
     }
 
     return Card(
