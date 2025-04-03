@@ -77,7 +77,6 @@ class NotificationServices {
       sound: RawResourceAndroidNotificationSound('azan1'),
       enableVibration: true,
       playSound: true,
-      timeoutAfter: 10000,
       ongoing: true,
       autoCancel: false,
       showWhen: false,
@@ -91,7 +90,7 @@ class NotificationServices {
       actions: [
         AndroidNotificationAction(
           _cancelActionId,
-          'Cancel',
+          'Dismiss',
           cancelNotification: true,
         ),
       ],
@@ -118,8 +117,8 @@ class NotificationServices {
     );
   }
 
-  @pragma('vm:entry-point') // Add for cancellation
-  static Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
-  }
+  // @pragma('vm:entry-point') // Add for cancellation
+  // static Future<void> cancelAllNotifications() async {
+  //   await flutterLocalNotificationsPlugin.cancelAll();
+  // }
 }
