@@ -31,9 +31,7 @@ class NotificationServices {
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission(
-          
-        );
+        ?.requestNotificationsPermission();
 
     await _createPrayerNotificationChannel();
   }
@@ -67,12 +65,12 @@ class NotificationServices {
   }
 
   @pragma('vm:entry-point') // Add for notification display
-  static Future<void> showPrayerNotification(String prayerName) async {
+  static Future<void> showPrayerNotification(String title,body) async {
     const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       _channelId,
       'Prayer Reminders',
       channelDescription: 'Channel for prayer time notifications',
-      importance: Importance.max,
+      importance: Importance.max,    
       priority: Priority.high,
       sound: RawResourceAndroidNotificationSound('azan1'),
       enableVibration: true,
@@ -111,8 +109,8 @@ class NotificationServices {
 
     await flutterLocalNotificationsPlugin.show(
       DateTime.now().millisecondsSinceEpoch % 100000,
-      '$prayerName Prayer Time',
-      'It\'s time for $prayerName prayer',
+      title,
+      body,
       notificationDetails,
     );
   }

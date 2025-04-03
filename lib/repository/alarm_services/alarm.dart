@@ -82,16 +82,17 @@ class AlarmService {
 
 @pragma('vm:entry-point')
   static void alarmCallback(int id, Map<String, dynamic> params) async {
-    final name = params['name'] as String;
+    final title = params['name'] as String;
+    final  body = "It's time to pray";
     
     // Show persistent notification
-    await NotificationServices.showPrayerNotification(name);
+    await NotificationServices.showPrayerNotification(title,body);
     
     // Keep the device awake for 1 minute
     final DateTime endTime = DateTime.now().add(const Duration(minutes: 1));
     while (DateTime.now().isBefore(endTime)) {
       if (kDebugMode) {
-        debugPrint('🕌 $name Prayer Alert Active 🕌');
+        debugPrint('🕌 $title Prayer Alert Active 🕌');
       }
       await Future.delayed(const Duration(seconds: 5));
     }

@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ElevatedButton(
                 onPressed: () {
                   NotificationServices.showPrayerNotification(
-                    'Instant Notification',
+                    'salat name','salat body',
                     
                   );
                 },
