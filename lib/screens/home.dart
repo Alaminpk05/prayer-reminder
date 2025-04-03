@@ -77,9 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  NotificationServices.showInstantNotification(
+                  NotificationServices.showPrayerNotification(
                     'Instant Notification',
-                    'this is instant notification body',
+                    
                   );
                 },
                 child: Text('send instant notification'),

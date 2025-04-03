@@ -1,6 +1,6 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:prayer_reminder/repository/notification/notification.dart';
 
 @pragma('vm:entry-point')
 class AlarmService {
@@ -80,18 +80,23 @@ class AlarmService {
     await AndroidAlarmManager.cancel(1);
   }
 
-  @pragma('vm:entry-point')
-  static void alarmCallback(
-    int id,
-    Map<String, dynamic> params,
-  ) { 
+@pragma('vm:entry-point')
+  static void alarmCallback(int id, Map<String, dynamic> params) async {
     final name = params['name'] as String;
-    final now = DateTime.now();
-    final timeStr =
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-
-    debugPrint('🕌 PRAYER TIME ALERT ($timeStr) 🕌');
-    debugPrint('🕌 $name Prayer Time Triggered! 🕌');
-    debugPrint('🕌 Alarm ID: $id 🕌');
+    
+    // Show persistent notification
+    await NotificationServices.showPrayerNotification(name);
+    
+    // Keep the device awake for 1 minute
+    final DateTime endTime = DateTime.now().add(const Duration(minutes: 1));
+    while (DateTime.now().isBefore(endTime)) {
+      if (kDebugMode) {
+        debugPrint('🕌 $name Prayer Alert Active 🕌');
+      }
+      await Future.delayed(const Duration(seconds: 5));
+    }
+    
+    // Cancel notification after 1 minute
+    await NotificationServices.flutterLocalNotificationsPlugin.cancel(id);
   }
 }

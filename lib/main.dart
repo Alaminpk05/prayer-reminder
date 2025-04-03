@@ -6,6 +6,7 @@ import 'package:prayer_reminder/repository/notification/notification.dart';
 import 'package:prayer_reminder/screens/home.dart';
 import 'package:prayer_reminder/utils/helpers/permission/permission.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Prayer Reminder',
         theme: ThemeData(primarySwatch: Colors.blue),
+        
         home: const HomeScreen(),
       ),
     );
