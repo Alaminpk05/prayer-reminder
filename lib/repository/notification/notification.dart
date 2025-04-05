@@ -1,16 +1,18 @@
+import 'dart:typed_data';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-@pragma('vm:entry-point') // Add this annotation
+@pragma('vm:entry-point')
 class NotificationServices {
-  @pragma('vm:entry-point') // Add for static fields accessed from native
+  @pragma('vm:entry-point')
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   static const String _channelId = 'prayer_channel_id';
   static const String _cancelActionId = 'cancel_action';
 
-  @pragma('vm:entry-point') // Add for initialization called from native
+  @pragma('vm:entry-point')
   static Future<void> initialize() async {
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("@mipmap/ic_launcher");
@@ -28,52 +30,64 @@ class NotificationServices {
       onDidReceiveBackgroundNotificationResponse: _onNotificationTap,
     );
     
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-
+    await _requestAndroidPermissions();
     await _createPrayerNotificationChannel();
   }
 
-  @pragma('vm:entry-point') // Add for channel creation
+  static Future<void> _requestAndroidPermissions() async {
+    final androidPlugin = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    
+    await androidPlugin?.requestNotificationsPermission();
+    if (await DeviceInfoPlugin().androidInfo.then((info) => info.version.sdkInt >= 31)) {
+      await androidPlugin?.requestExactAlarmsPermission();
+      await androidPlugin?.requestNotificationsPermission();
+    }
+  }
+
+  @pragma('vm:entry-point')
   static Future<void> _createPrayerNotificationChannel() async {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    final androidPlugin = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    
+    // Delete existing channel to force recreation
+    await androidPlugin?.deleteNotificationChannel(_channelId);
+
+    const vibrationPattern = [0, 500, 1000, 500];
+    
+    final channel = AndroidNotificationChannel(
       _channelId,
       'Prayer Reminders',
-      description: 'Channel for prayer time notifications',
+      description: 'Channel for prayer notifications',
       importance: Importance.max,
-      sound: RawResourceAndroidNotificationSound('azan1'),
+      sound: const RawResourceAndroidNotificationSound('azan1'),
       enableVibration: true,
+      vibrationPattern: Int64List.fromList(vibrationPattern),
       playSound: true,
       showBadge: true,
       enableLights: true,
       ledColor: Colors.green,
+      audioAttributesUsage: AudioAttributesUsage.notification
     );
 
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+    await androidPlugin?.createNotificationChannel(channel);
   }
 
-  @pragma('vm:entry-point') // Add for notification tap handler
-  static Future<void> _onNotificationTap(NotificationResponse response) async {
-    if (response.actionId == _cancelActionId) {
-      await flutterLocalNotificationsPlugin.cancel(response.id!);
-    }
-  }
-
-  @pragma('vm:entry-point') // Add for notification display
-  static Future<void> showPrayerNotification(String title,body) async {
-    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+  @pragma('vm:entry-point')
+  static Future<void> showPrayerNotification(String title, String body) async {
+    const vibrationPattern = [0, 500, 1000, 500];
+    
+    final androidDetails = AndroidNotificationDetails(
       _channelId,
       'Prayer Reminders',
       channelDescription: 'Channel for prayer time notifications',
-      importance: Importance.max,    
+      importance: Importance.max,
       priority: Priority.high,
-      sound: RawResourceAndroidNotificationSound('azan1'),
+      sound: const RawResourceAndroidNotificationSound('azan1'),
       enableVibration: true,
+      vibrationPattern: Int64List.fromList(vibrationPattern),
       playSound: true,
       ongoing: true,
       autoCancel: false,
@@ -85,7 +99,11 @@ class NotificationServices {
       ledColor: Colors.green,
       ledOnMs: 1000,
       ledOffMs: 500,
-      actions: [
+      category: AndroidNotificationCategory.alarm,
+      audioAttributesUsage: AudioAttributesUsage.notification,
+      
+      timeoutAfter: 60000,
+      actions: const [
         AndroidNotificationAction(
           _cancelActionId,
           'Dismiss',
@@ -94,29 +112,44 @@ class NotificationServices {
       ],
     );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+    const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
       sound: 'default',
       categoryIdentifier: 'prayerCategory',
+      interruptionLevel: InterruptionLevel.timeSensitive,
     );
 
-    const NotificationDetails notificationDetails = NotificationDetails(
+    final notificationDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
 
-    await flutterLocalNotificationsPlugin.show(
-      DateTime.now().millisecondsSinceEpoch % 100000,
-      title,
-      body,
-      notificationDetails,
-    );
+    try {
+      await flutterLocalNotificationsPlugin.show(
+        DateTime.now().millisecondsSinceEpoch % 100000,
+        title,
+        body,
+        notificationDetails,
+      );
+    } catch (e) {
+      debugPrint('Notification error: $e');
+      // Recreate channel and retry
+      await _createPrayerNotificationChannel();
+      await flutterLocalNotificationsPlugin.show(
+        DateTime.now().millisecondsSinceEpoch % 100000,
+        title,
+        body,
+        notificationDetails,
+      );
+    }
   }
 
-  // @pragma('vm:entry-point') // Add for cancellation
-  // static Future<void> cancelAllNotifications() async {
-  //   await flutterLocalNotificationsPlugin.cancelAll();
-  // }
+  @pragma('vm:entry-point')
+  static Future<void> _onNotificationTap(NotificationResponse response) async {
+    if (response.actionId == _cancelActionId) {
+      await flutterLocalNotificationsPlugin.cancel(response.id!);
+    }
+  }
 }

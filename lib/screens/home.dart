@@ -76,8 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () {
-                  NotificationServices.showPrayerNotification(
+                onPressed: () async {
+                  await NotificationServices.showPrayerNotification(
                     'salat name','salat body',
                     
                   );
