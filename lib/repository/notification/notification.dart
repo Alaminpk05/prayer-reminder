@@ -1,14 +1,19 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationServices {
-  static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  /// NOTIFICATION PLUGIN INITIALIZATION
+  static const String _channelId = 'prayer_alarm_channel';
+  static const String _cancelActionId = 'cancel_action';
+  static const String _soundFile = 'azan1'; // Without extension
+
   static Future<void> initialize() async {
+    // Create notification channel (MUST be done before showing notifications)
+    await _createNotificationChannel();
+
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("@mipmap/ic_launcher");
     const DarwinInitializationSettings iosInitializationSettings =
@@ -18,54 +23,57 @@ class NotificationServices {
           android: androidInitializationSettings,
           iOS: iosInitializationSettings,
         );
+
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-      onDidReceiveBackgroundNotificationResponse:
-          onDidReceiveNotificationResponse,
+      onDidReceiveNotificationResponse: (payload){},
+    );
+
+    // Request permissions (Android 13+)
+    await _requestPermissions();
+  }
+
+  static Future<void> _createNotificationChannel() async {
+    const vibrationPattern = [0, 500, 1000, 500];
+    
+    final channel = AndroidNotificationChannel(
+      _channelId,
+      'Prayer Alarms',
+      description: 'Channel for prayer time alarms',
+      importance: Importance.max,
+      playSound: true,
+      sound: const RawResourceAndroidNotificationSound(_soundFile),
+      enableVibration: true,
+      vibrationPattern: Int64List.fromList(vibrationPattern),
+      audioAttributesUsage: AudioAttributesUsage.alarm,
+      ledColor: Colors.green,
     );
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.requestNotificationsPermission();
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
   }
 
-  /// NOTIFICATION RESPONSE FUNCTION
-  static Future<void> onDidReceiveNotificationResponse(
-    NotificationResponse notificationResponse,
-  ) async {
-    // final String? payload = notificationResponse.payload;
-    // if (notificationResponse.payload != null) {
-    //   debugPrint('notification payload: $payload');
-    //   debugPrint('Clicked on notificaiton');
-    // }
-    debugPrint('Clicked on notificaiton');
-    // await Navigator.push(
-    //   context,
-    //   MaterialPageRoute<void>(builder: (context) => SecondScreen(payload)),
-    // );
+  static Future<void> _requestPermissions() async {
+    final androidPlugin = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    
+    await androidPlugin?.requestNotificationsPermission();
+    await androidPlugin?.requestExactAlarmsPermission();
   }
-    static const String _channelId = 'prayer_channel_id';
-  static const String _cancelActionId = 'cancel_action';
 
-  /// SHOW ON INSTANT NOTIFICATION
-  static Future<void> showInstantNotification(String title, String body) async {
-
-    const vibrationPattern = [0, 500, 1000, 500];
-
-    //Define notification details
-    NotificationDetails notificationDetails = NotificationDetails(
-      android: AndroidNotificationDetails(_channelId, "channel_Name",
+  static Future<void> showAlarmNotification(String title, String body) async {
+    final androidDetails = AndroidNotificationDetails(
+      _channelId,
+      'Prayer Alarm',
+      channelDescription: 'Prayer time alarm notification',
       importance: Importance.max,
       priority: Priority.high,
-      enableVibration: true,
-      sound: RawResourceAndroidNotificationSound('azan1'),
       playSound: true,
-      ongoing: true,
-      autoCancel: true,
-      showWhen: false,
+      // sound: const RawResourceAndroidNotificationSound(_soundFile),
+      enableVibration: true,
       visibility: NotificationVisibility.public,
       fullScreenIntent: true,
       colorized: true,
@@ -79,17 +87,25 @@ class NotificationServices {
       actions: const [
         AndroidNotificationAction(
           _cancelActionId,
-          'Cancel',
+          'Stop',
           cancelNotification: true,
         ),
-      ],),
-      iOS: const DarwinNotificationDetails(),
+      ],
     );
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+      // sound: 'azan.caf', // iOS sound file
+      interruptionLevel: InterruptionLevel.timeSensitive,
+    );
+
     await flutterLocalNotificationsPlugin.show(
-      0,
+      DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
       title,
       body,
-      notificationDetails,
+      NotificationDetails(android: androidDetails, iOS: iosDetails),
     );
   }
 }
