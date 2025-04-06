@@ -1,7 +1,8 @@
 import 'dart:typed_data';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+
 
 @pragma('vm:entry-point')
 class NotificationServices {
@@ -11,9 +12,11 @@ class NotificationServices {
 
   static const String _channelId = 'prayer_channel_id';
   static const String _cancelActionId = 'cancel_action';
+  static const String _soundFile = 'sound';
 
   @pragma('vm:entry-point')
   static Future<void> initialize() async {
+    await _createPrayerNotificationChannel();
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("@mipmap/ic_launcher");
     const DarwinInitializationSettings iosInitializationSettings =
@@ -31,19 +34,17 @@ class NotificationServices {
     );
     
     await _requestAndroidPermissions();
-    await _createPrayerNotificationChannel();
+    
   }
 
   static Future<void> _requestAndroidPermissions() async {
     final androidPlugin = flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
-    
-    await androidPlugin?.requestNotificationsPermission();
-    if (await DeviceInfoPlugin().androidInfo.then((info) => info.version.sdkInt >= 31)) {
+  
       await androidPlugin?.requestExactAlarmsPermission();
       await androidPlugin?.requestNotificationsPermission();
-    }
+    
   }
 
   @pragma('vm:entry-point')
@@ -62,14 +63,14 @@ class NotificationServices {
       'Prayer Reminders',
       description: 'Channel for prayer notifications',
       importance: Importance.max,
-      sound: const RawResourceAndroidNotificationSound('azan1'),
+      sound: const RawResourceAndroidNotificationSound(_soundFile),
       enableVibration: true,
       vibrationPattern: Int64List.fromList(vibrationPattern),
       playSound: true,
       showBadge: true,
       enableLights: true,
       ledColor: Colors.green,
-      audioAttributesUsage: AudioAttributesUsage.notification
+      audioAttributesUsage: AudioAttributesUsage.alarm
     );
 
     await androidPlugin?.createNotificationChannel(channel);
@@ -85,7 +86,7 @@ class NotificationServices {
       channelDescription: 'Channel for prayer time notifications',
       importance: Importance.max,
       priority: Priority.high,
-      sound: const RawResourceAndroidNotificationSound('azan1'),
+      sound: const RawResourceAndroidNotificationSound(_soundFile),
       enableVibration: true,
       vibrationPattern: Int64List.fromList(vibrationPattern),
       playSound: true,
@@ -100,9 +101,9 @@ class NotificationServices {
       ledOnMs: 1000,
       ledOffMs: 500,
       category: AndroidNotificationCategory.alarm,
-      audioAttributesUsage: AudioAttributesUsage.notification,
+      audioAttributesUsage: AudioAttributesUsage.alarm,
       
-      timeoutAfter: 60000,
+      timeoutAfter: 10000,
       actions: const [
         AndroidNotificationAction(
           _cancelActionId,
