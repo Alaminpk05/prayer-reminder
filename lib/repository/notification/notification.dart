@@ -61,7 +61,7 @@ class NotificationServices {
       importance: Importance.max,
       priority: Priority.high,
       enableVibration: true,
-      // sound: RawResourceAndroidNotificationSound('azan1'),
+      sound: RawResourceAndroidNotificationSound('azan1'),
       playSound: true,
       ongoing: true,
       autoCancel: true,
@@ -73,13 +73,13 @@ class NotificationServices {
       ledColor: Colors.green,
       ledOnMs: 1000,
       ledOffMs: 500,
-      
-      
+      audioAttributesUsage: AudioAttributesUsage.alarm,
+      category: AndroidNotificationCategory.alarm,
       timeoutAfter: 60000,
       actions: const [
         AndroidNotificationAction(
           _cancelActionId,
-          'dismiss',
+          'Cancel',
           cancelNotification: true,
         ),
       ],),
