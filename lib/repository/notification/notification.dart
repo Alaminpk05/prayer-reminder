@@ -8,11 +8,11 @@ class NotificationServices {
 
   static const String _channelId = 'prayer_alarm_channel';
   static const String _cancelActionId = 'cancel_action';
-  static const String _soundFile = 'azan1'; // Without extension
+  static const String _soundFile = 'sound'; // Without extension
 
   static Future<void> initialize() async {
     // Create notification channel (MUST be done before showing notifications)
-    await _createNotificationChannel();
+      await _createNotificationChannel();
 
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings("@mipmap/ic_launcher");
@@ -44,8 +44,10 @@ class NotificationServices {
       playSound: true,
       sound: const RawResourceAndroidNotificationSound(_soundFile),
       enableVibration: true,
+      
       vibrationPattern: Int64List.fromList(vibrationPattern),
       audioAttributesUsage: AudioAttributesUsage.alarm,
+      
       ledColor: Colors.green,
     );
 
@@ -72,7 +74,7 @@ class NotificationServices {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      // sound: const RawResourceAndroidNotificationSound(_soundFile),
+      sound: const RawResourceAndroidNotificationSound(_soundFile),
       enableVibration: true,
       visibility: NotificationVisibility.public,
       fullScreenIntent: true,
@@ -83,11 +85,11 @@ class NotificationServices {
       ledOffMs: 500,
       audioAttributesUsage: AudioAttributesUsage.alarm,
       category: AndroidNotificationCategory.alarm,
-      timeoutAfter: 60000,
+      timeoutAfter: 10000,
       actions: const [
         AndroidNotificationAction(
           _cancelActionId,
-          'Stop',
+          'Dismiss',
           cancelNotification: true,
         ),
       ],
