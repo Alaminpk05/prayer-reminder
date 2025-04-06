@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -45,13 +47,43 @@ class NotificationServices {
     //   MaterialPageRoute<void>(builder: (context) => SecondScreen(payload)),
     // );
   }
+    static const String _channelId = 'prayer_channel_id';
+  static const String _cancelActionId = 'cancel_action';
 
   /// SHOW ON INSTANT NOTIFICATION
   static Future<void> showInstantNotification(String title, String body) async {
+
+    const vibrationPattern = [0, 500, 1000, 500];
+
     //Define notification details
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: AndroidNotificationDetails("channel_Id", "channel_Name"),
-      iOS: DarwinNotificationDetails(),
+    NotificationDetails notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(_channelId, "channel_Name",
+      importance: Importance.max,
+      priority: Priority.high,
+      enableVibration: true,
+      // sound: RawResourceAndroidNotificationSound('azan1'),
+      playSound: true,
+      ongoing: true,
+      autoCancel: true,
+      showWhen: false,
+      visibility: NotificationVisibility.public,
+      fullScreenIntent: true,
+      colorized: true,
+      color: Colors.green,
+      ledColor: Colors.green,
+      ledOnMs: 1000,
+      ledOffMs: 500,
+      
+      
+      timeoutAfter: 60000,
+      actions: const [
+        AndroidNotificationAction(
+          _cancelActionId,
+          'dismiss',
+          cancelNotification: true,
+        ),
+      ],),
+      iOS: const DarwinNotificationDetails(),
     );
     await flutterLocalNotificationsPlugin.show(
       0,
