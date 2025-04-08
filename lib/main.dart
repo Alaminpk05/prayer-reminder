@@ -8,6 +8,28 @@ import 'package:prayer_reminder/screens/home.dart';
 import 'package:prayer_reminder/utils/helpers/permission/permission.dart';
 
 
+
+@pragma('vm:entry-point')
+  void alarmCallback(int id, Map<String, dynamic> params) async {
+    final title = params['name'] as String;
+    final  body = "It's time to pray";
+    
+    // Show persistent notification
+    await NotificationServices.showPrayerNotification(title,body);
+    
+    // Keep the device awake for 1 minute
+    final DateTime endTime = DateTime.now().add(const Duration(minutes: 1));
+    while (DateTime.now().isBefore(endTime)) {
+      if (kDebugMode) {
+        debugPrint('🕌 $title Prayer Alert Active 🕌');
+      }
+      await Future.delayed(const Duration(seconds: 5));
+    }
+    
+    // Cancel notification after 1 minute
+    await NotificationServices.flutterLocalNotificationsPlugin.cancel(id);
+  }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
