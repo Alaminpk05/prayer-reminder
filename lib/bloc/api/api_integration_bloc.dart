@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/api/api_services.dart';
-
 part 'api_integration_event.dart';
 part 'api_integration_state.dart';
 
@@ -13,11 +12,13 @@ class ApiIntegrationBloc
     on<ApiIntegrationEvent>((event, emit) async {
       emit(ApiIntegrationLoadingState());
       try {
-        PrayerTimes? salatDate =
-            await PrayerTimeApiService().fetchPrayerTimes();
+        // PrayerTimes salatDate = PrayerTimes(fajr: "04:50", johor: '13:30', asor: '16:45', magrib: '18:15', isha: 
+        // '19:45');
+        PrayerTimes? salatDate=await PrayerTimeApiService().fetchPrayerTimes();
+        
+        await PrayerTimeApiService().fetchPrayerTimes();
         emit(ApiIntegrationSuccessState(prayerTimes: salatDate));
       } on DioException catch (e) {
-        
         emit(ApiIntegrationErrorState(errorMessage: e.message.toString()));
       } catch (e) {
         emit(ApiIntegrationErrorState(errorMessage: e.toString()));
