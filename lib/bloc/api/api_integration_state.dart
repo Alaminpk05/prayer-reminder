@@ -18,3 +18,8 @@ final class ApiIntegrationErrorState extends ApiIntegrationState {
 
   ApiIntegrationErrorState({required this.errorMessage});
 }
+
+final class ApiIntegrationIdleState extends ApiIntegrationState{}
+final class EmptyDataState extends ApiIntegrationState{
+  
+}

@@ -30,11 +30,15 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state is ApiIntegrationSuccessState) {
             _scheduleAlarms(state.prayerTimes!);
           }
+          else if (state is ApiIntegrationErrorState){
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          } 
         },
         builder: (context, state) {
           if (state is ApiIntegrationLoadingState) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is ApiIntegrationSuccessState) {
+          }
+          else if (state is ApiIntegrationSuccessState) {
             return _buildPrayerTimesList(state.prayerTimes!);
           }
           return const Center(child: Text('No prayer times available'));

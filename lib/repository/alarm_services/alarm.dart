@@ -65,6 +65,7 @@ class AlarmService {
       exact: true,
       wakeup: true,
       rescheduleOnReboot: true,
+      allowWhileIdle: true,
       params: {'id': id, 'name': name},
     );
 
