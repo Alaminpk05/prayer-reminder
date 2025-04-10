@@ -10,62 +10,72 @@ import 'package:prayer_reminder/repository/api/api_services.dart';
 import 'package:prayer_reminder/repository/notification/notification.dart';
 import 'package:prayer_reminder/screens/home.dart';
 import 'package:prayer_reminder/utils/helpers/permission/permission.dart';
-
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
-  void alarmCallback(int id, Map<String, dynamic> params) async {
-    final title = params['name'] as String;
-    final  body = "It's time to pray";
-    
-    // Show persistent notification
-    await NotificationServices.showPrayerNotification(title,body);
-    
-    // Keep the device awake for 1 minute
-    final DateTime endTime = DateTime.now().add(const Duration(minutes: 1));
-    while (DateTime.now().isBefore(endTime)) {
-      if (kDebugMode) {
-        debugPrint('🕌 $title Prayer Alert Active 🕌');
-      }
-      await Future.delayed(const Duration(seconds: 5));
+void alarmCallback(int id, Map<String, dynamic> params) async {
+  final title = params['name'] as String;
+  final body = "It's time to pray";
+
+  // Show persistent notification
+  await NotificationServices.showPrayerNotification(title, body);
+
+  // Keep the device awake for 1 minute
+  final DateTime endTime = DateTime.now().add(const Duration(minutes: 1));
+  while (DateTime.now().isBefore(endTime)) {
+    if (kDebugMode) {
+      debugPrint('🕌 $title Prayer Alert Active 🕌');
     }
-    
-    // Cancel notification after 1 minute
-    await NotificationServices.flutterLocalNotificationsPlugin.cancel(id);
+    await Future.delayed(const Duration(seconds: 5));
   }
+
+  // Cancel notification after 1 minute
+  await NotificationServices.flutterLocalNotificationsPlugin.cancel(id);
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
- 
- 
-   await NotificationServices.initialize();
-   await PermissionHelper.checkAndRequestAlarmPermission();
-    await AlarmService.initialize();
- 
+  final prefs = await SharedPreferences.getInstance();
+
+  await NotificationServices.initialize();
+  await PermissionHelper.checkAndRequestAlarmPermission();
+  await AlarmService.initialize();
+
   // Suppress debug logs in release mode
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
-HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: kIsWeb
-        ? HydratedStorageDirectory.web
-        : HydratedStorageDirectory((await getTemporaryDirectory()).path),
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory:
+        kIsWeb
+            ? HydratedStorageDirectory.web
+            : HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
-  runApp(const MyApp());
+  runApp( MyApp(prefs:prefs ,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.prefs});
+  final SharedPreferences prefs;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => ApiIntegrationBloc(PrayerTimeApiService(),InternetConnection()))],
+      providers: [
+        BlocProvider(
+          create:
+              (context) => ApiIntegrationBloc(
+                PrayerTimeApiService(),
+                InternetConnection(),
+                prefs,
+              ),
+        ),
+      ],
       child: MaterialApp(
         title: 'Prayer Reminder',
         theme: ThemeData(primarySwatch: Colors.blue),
-        
+
         home: const HomeScreen(),
         debugShowCheckedModeBanner: false,
       ),

@@ -22,4 +22,12 @@ class PrayerTimes {
       isha: json['isha'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'fajr': fajr,
+    'johor': johor,
+    'asor': asor,
+    'magrib': magrib,
+    'isha': isha,
+  };
 }
