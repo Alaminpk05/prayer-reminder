@@ -18,7 +18,10 @@ class PermissionHelper {
         if (status.isGranted) {
           debugPrint('Schedule exact alarm permission granted');
           return true;
-        } else if (status.isPermanentlyDenied) {
+        } 
+        if(status.isDenied){
+           await openAppSettings();
+          }else if (status.isPermanentlyDenied) {
           debugPrint('Permission permanently denied, opening app settings');
           await openAppSettings();
         }
