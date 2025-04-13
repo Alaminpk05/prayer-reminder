@@ -10,7 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'api_integration_event.dart';
 part 'api_integration_state.dart';
 
-class ApiIntegrationBloc extends Bloc<ApiIntegrationEvent, ApiIntegrationState> {
+class ApiIntegrationBloc
+    extends Bloc<ApiIntegrationEvent, ApiIntegrationState> {
   final PrayerTimeApiService _prayerTimeApiService;
   final InternetConnection _internetConnection;
   final SharedPreferences _prefs;
@@ -39,9 +40,12 @@ class ApiIntegrationBloc extends Bloc<ApiIntegrationEvent, ApiIntegrationState> 
       final hasConnection = await _internetConnection.hasInternetAccess;
       if (!hasConnection) {
         if (cachedPrayerTimes == null) {
-          return emit(ApiIntegrationErrorState(
-            errorMessage: "No internet connection and no cached data available",
-          ));
+          return emit(
+            ApiIntegrationErrorState(
+              errorMessage:
+                  "No internet connection and no cached data available",
+            ),
+          );
         }
         return; // Already emitted cached data
       }
@@ -50,9 +54,11 @@ class ApiIntegrationBloc extends Bloc<ApiIntegrationEvent, ApiIntegrationState> 
       final freshPrayerTimes = await _prayerTimeApiService.fetchPrayerTimes();
       if (freshPrayerTimes == null) {
         if (cachedPrayerTimes == null) {
-          return emit(ApiIntegrationErrorState(
-            errorMessage: "Failed to fetch prayer times",
-          ));
+          return emit(
+            ApiIntegrationErrorState(
+              errorMessage: "Failed to fetch prayer times",
+            ),
+          );
         }
         return; // Keep using cached data
       }
@@ -65,18 +71,22 @@ class ApiIntegrationBloc extends Bloc<ApiIntegrationEvent, ApiIntegrationState> 
       if (cachedPrayerTimes != null) {
         emit(ApiIntegrationSuccessState(prayerTimes: cachedPrayerTimes));
       } else {
-        emit(ApiIntegrationErrorState(
-          errorMessage: e.message ?? "Network error occurred",
-        ));
+        emit(
+          ApiIntegrationErrorState(
+            errorMessage: e.message ?? "Network error occurred",
+          ),
+        );
       }
     } catch (e) {
       final cachedPrayerTimes = _loadFromCache();
       if (cachedPrayerTimes != null) {
         emit(ApiIntegrationSuccessState(prayerTimes: cachedPrayerTimes));
       } else {
-        emit(ApiIntegrationErrorState(
-          errorMessage: "An unexpected error occurred",
-        ));
+        emit(
+          ApiIntegrationErrorState(
+            errorMessage: "An unexpected error occurred",
+          ),
+        );
       }
     }
   }

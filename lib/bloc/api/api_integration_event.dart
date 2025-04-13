@@ -6,3 +6,6 @@ sealed class ApiIntegrationEvent {}
 class FetchPayerTimeApiEvent extends ApiIntegrationEvent{
   
 }
+class FetchForbiddenPayerTimeApiEvent extends ApiIntegrationEvent{
+  
+}

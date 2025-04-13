@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
-import 'package:prayer_reminder/repository/notification/notification.dart';
-
+import 'package:prayer_reminder/repository/api/api_services.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
+import 'package:prayer_reminder/widgets/prayer_list_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
+    PrayerTimeApiService().fetchedForbiddenPrayerTimes();
   }
 
   @override
@@ -29,17 +31,104 @@ class _HomeScreenState extends State<HomeScreen> {
         listener: (context, state) {
           if (state is ApiIntegrationSuccessState) {
             _scheduleAlarms(state.prayerTimes!);
+          } else if (state is ApiIntegrationErrorState) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
           }
-          else if (state is ApiIntegrationErrorState){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage)));
-          } 
         },
         builder: (context, state) {
           if (state is ApiIntegrationLoadingState) {
             return const Center(child: CircularProgressIndicator());
-          }
-          else if (state is ApiIntegrationSuccessState) {
-            return _buildPrayerTimesList(state.prayerTimes!);
+          } else if (state is ApiIntegrationSuccessState) {
+            return Column(
+              children: [
+                buildPrayerTimesList(state.prayerTimes!),
+                SizedBox(height: 15),
+
+                ///FORBIDDEN PRAYER TIME SECTION
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6, bottom: 15),
+                      child: Text(
+                        'FORBIDDEN PRAYER TIME',
+                        style: Theme.of(context).textTheme.titleMedium!
+                            .copyWith(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: 80,
+                      child: ListView.separated(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              SvgPicture.asset(
+                                prayers[index]['icon'],
+                                color: Colors.grey.shade400,
+                              ),
+                              SizedBox(height: 3),
+                              Text(
+                                forbiddenTimeList[index]['name']!,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium!.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Text(
+                                forbiddenTimeList[index]['time']!,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMedium!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              top: 10,
+                              bottom: 30,
+                              left: 7,
+                              right: 7,
+                            ),
+                            child: Container(
+                              height: 5,
+                              width: 1.3,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                        itemCount: forbiddenTimeList.length,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // SizedBox(height: 30),
+                // ElevatedButton(
+                //   onPressed: () async {
+                //     await NotificationServices.showPrayerNotification(
+                //       'salat name',
+                //       'salat body',
+                //     );
+                //   },
+                //   child: Text('send instant notification'),
+                // ),
+              ],
+            );
           }
           return const Center(child: Text('No prayer times available'));
         },
@@ -57,73 +146,6 @@ class _HomeScreenState extends State<HomeScreen> {
     };
 
     await AlarmService.schedulePrayerAlarms(times);
-    debugPrint('✅ All prayer alarms scheduled successfully');
-  }
-
-  Widget _buildPrayerTimesList(PrayerTimes prayerTimes) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          const Text(
-            'Scheduled Prayer Alarms',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-          Column(
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: prayers.length,
-                itemBuilder:
-                    (context, index) => _buildPrayerCard(index, prayerTimes),
-              ),
-              SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () async {
-                  await NotificationServices.showPrayerNotification(
-                    'salat name','salat body',
-                    
-                  );
-                },
-                child: Text('send instant notification'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPrayerCard(int index, PrayerTimes prayerTimes) {
-    String time;
-    switch (index) {
-      case 0:
-        time = "${prayerTimes.fajr} AM";
-        break;
-      case 1:
-        time = "${prayerTimes.johor} PM";
-        break;
-      case 2:
-        time = "${prayerTimes.asor} PM";
-        break;
-      case 3:
-        time = "${prayerTimes.magrib} PM";
-        break;
-      case 4:
-        time = "${prayerTimes.isha} PM";
-        break;
-      default:
-        time = '--:--';
-    }
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: Icon(prayers[index]['icon'], size: 32),
-        title: Text(prayers[index]['name']!),
-        subtitle: Text(time),
-      ),
-    );
+    debugPrint(' All prayer alarms scheduled successfully');
   }
 }

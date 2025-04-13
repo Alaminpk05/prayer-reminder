@@ -1,0 +1,28 @@
+{
+
+  "forbidden_periods": [
+    {
+
+      "name": "Sunrise Time",
+      "start": "05:59",
+      "end": "06:14",
+      "period": "am"
+     
+    },
+    {
+
+      "name": "Sunset Time",
+      "start": "18:02",
+      "end": "18:17",
+      "period": "pm"
+      
+    },
+    {
+      "name": "Zawal Time",
+      "start": "11:58",
+      "end": "12:08",
+      "period": "pm"
+      
+    }
+  ]
+}
