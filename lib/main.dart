@@ -46,6 +46,7 @@ Future<void> main() async {
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
+   
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory:
         kIsWeb
@@ -73,6 +74,13 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        localizationsDelegates: [
+
+        ],
+        supportedLocales: [
+          Locale('en'),
+          Locale('ar')
+        ],
         title: 'Prayer Reminder',
         theme: ThemeData(primarySwatch: Colors.blue),
 

@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
@@ -16,16 +19,45 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
+
+    // updateTime();
+
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
+  }
+
+  // void updateTime() {
+  //   Timer.periodic(Duration(milliseconds: 500), (timer) {
+  //     if (mounted) {
+  //       setState(() {});
+  //     }
+  //   });
+  // }
+
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Prayer Times')),
+      appBar: AppBar(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              DateFormat('dd MMMM EEEE').format(DateTime.now()),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+          ],
+        ),
+      ),
       body: BlocConsumer<ApiIntegrationBloc, ApiIntegrationState>(
         listener: (context, state) {
           if (state is ApiIntegrationSuccessState) {
@@ -40,35 +72,68 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state is ApiIntegrationLoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ApiIntegrationSuccessState) {
-            final String sunriseLastTime = subtractMinutesFromTime(
+            final waqto = checkWaqto(state.prayerTimes!);
+            final String sunriseSub = subtractMinutesFromTime(
               state.prayerTimes!.sunrise.toString(),
               15,
             );
-            final String middayLastTime = subtractMinutesFromTime(
+              final String sunriseAdd= addMinutesFromTime(
+              state.prayerTimes!.sunrise.toString(),
+              15,
+            );
+
+            final String middaySub = subtractMinutesFromTime(
               state.prayerTimes!.midday.toString(),
               6,
             );
-            final String sunsetLastTime = subtractMinutesFromTime(
+
+            final String sunsetSub = subtractMinutesFromTime(
               state.prayerTimes!.sunset.toString(),
               15,
             );
-            
-            debugPrint(sunriseLastTime);
-            debugPrint(middayLastTime);
-            debugPrint(sunsetLastTime);
+
+            debugPrint(sunriseSub);
+            debugPrint(middaySub);
+            debugPrint(sunsetSub);
             return Column(
               children: [
-                Container(child: Text('Header')),
-
+                // Header
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 8,
+                    bottom: 20,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        waqto,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        waqto=='Fajr'?state.prayerTimes!.fajr:waqto=='Dhuhr'?state.prayerTimes!.johor:
+                        waqto=='Asr'?state.prayerTimes!.asor:waqto=='Magrib'?state.prayerTimes!.magrib:waqto=='Isha'?state.prayerTimes!.isha:'Forbidden time',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineLarge!.copyWith(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // PRAYER TIME
                 buildPrayerTimesList(state.prayerTimes!),
                 SizedBox(height: 15),
 
                 ///FORBIDDEN PRAYER TIME SECTION
                 ForbiddenPrayerTimeWidget(
                   state: state,
-                  sunriseLastTime: sunriseLastTime,
-                  middayLastTime: middayLastTime,
-                  sunsetLastTime: sunsetLastTime,
+                  sunriseLastTime: sunriseSub,
+                  middayLastTime: middaySub,
+                  sunsetLastTime: sunsetSub, sunriseAdd: sunriseAdd,
                 ),
 
                 // SizedBox(height: 30),
@@ -110,12 +175,13 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
     required this.sunriseLastTime,
     required this.middayLastTime,
     required this.sunsetLastTime,
-    required this.state,
+    required this.state, required this.sunriseAdd,
   });
 
   final String sunriseLastTime;
   final String middayLastTime;
   final String sunsetLastTime;
+  final String sunriseAdd;
   final state;
 
   @override
@@ -147,6 +213,7 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       prayers[index]['icon'],
+                      // ignore: deprecated_member_use
                       color: Colors.grey.shade400,
                     ),
                     SizedBox(height: 3),
@@ -160,11 +227,11 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
                     ),
                     Text(
                       "${index == 0
-                          ? "${state.prayerTimes!.sunrise} - $sunriseLastTime"
+                          ? "$sunriseLastTime - $sunriseAdd"
                           : index == 1
-                          ? "${state.prayerTimes!.midday} - $middayLastTime"
+                          ? "$middayLastTime - ${state.prayerTimes!.midday} "
                           : index == 2
-                          ? "${state.prayerTimes!.sunset} - $sunsetLastTime"
+                          ? "$sunsetLastTime - ${state.prayerTimes!.sunset}"
                           : null}",
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w600,
