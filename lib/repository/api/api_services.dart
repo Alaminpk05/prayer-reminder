@@ -23,18 +23,6 @@ class PrayerTimeApiService {
     );
 
   Future<PrayerTimes?> fetchPrayerTimes() async {
-    final response = await _dio.get('/salat/db.json');
-
-    if (response.statusCode == 200) {
-      final timeData = response.data['time'] as Map<String, dynamic>;
-      debugPrint(timeData.keys.first);
-
-      debugPrint(timeData.toString());
-      return PrayerTimes.fromJson(timeData);
-    }
-    return null;
-  }
-  Future<PrayerTimes?> fetchedForbiddenPrayerTimes() async {
     final response = await _dio.get('/salat/api.php');
 
     if (response.statusCode == 200) {
@@ -46,5 +34,17 @@ class PrayerTimeApiService {
     }
     return null;
   }
+  // Future<PrayerTimes?> fetchedForbiddenPrayerTimes() async {
+  //   final response = await _dio.get('/salat/api.php');
+
+  //   if (response.statusCode == 200) {
+  //     final timeData = response.data['times'] as Map<String, dynamic>;
+  //     debugPrint(timeData.keys.first);
+
+  //     debugPrint(timeData.toString());
+  //     return PrayerTimes.fromJson(timeData);
+  //   }
+  //   return null;
+  // }
 
 }

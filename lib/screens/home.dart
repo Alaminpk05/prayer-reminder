@@ -4,8 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
-import 'package:prayer_reminder/repository/api/api_services.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
+import 'package:prayer_reminder/utils/helpers/convert.dart';
 import 'package:prayer_reminder/widgets/prayer_list_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
-    PrayerTimeApiService().fetchedForbiddenPrayerTimes();
   }
 
   @override
@@ -41,80 +40,105 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state is ApiIntegrationLoadingState) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ApiIntegrationSuccessState) {
+            final String sunriseLastTime = subtractMinutesFromTime(
+              state.prayerTimes!.sunrise.toString(),
+              15,
+            );
+            final String middayLastTime = subtractMinutesFromTime(
+              state.prayerTimes!.midday.toString(),
+              6,
+            );
+            final String sunsetLastTime = subtractMinutesFromTime(
+              state.prayerTimes!.sunset.toString(),
+              15,
+            );
+            debugPrint(sunriseLastTime);
+            debugPrint(middayLastTime);
+            debugPrint(sunsetLastTime);
             return Column(
               children: [
                 buildPrayerTimesList(state.prayerTimes!),
                 SizedBox(height: 15),
 
                 ///FORBIDDEN PRAYER TIME SECTION
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6, bottom: 15),
-                      child: Text(
-                        'FORBIDDEN PRAYER TIME',
-                        style: Theme.of(context).textTheme.titleMedium!
-                            .copyWith(fontWeight: FontWeight.w700),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6, bottom: 15),
+                        child: Text(
+                          'FORBIDDEN PRAYER TIME',
+                          style: Theme.of(context).textTheme.titleMedium!
+                              .copyWith(fontWeight: FontWeight.w700),
+                        ),
                       ),
-                    ),
 
-                    SizedBox(
-                      height: 80,
-                      child: ListView.separated(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
+                      SizedBox(
+                        height: 80,
+                        child: ListView.separated(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
 
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              SvgPicture.asset(
-                                prayers[index]['icon'],
-                                color: Colors.grey.shade400,
-                              ),
-                              SizedBox(height: 3),
-                              Text(
-                                forbiddenTimeList[index]['name']!,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium!.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 13,
-                                  color: Colors.grey,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                SvgPicture.asset(
+                                  prayers[index]['icon'],
+                                  color: Colors.grey.shade400,
                                 ),
-                              ),
-                              Text(
-                                forbiddenTimeList[index]['time']!,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium!.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade700,
+                                SizedBox(height: 3),
+                                Text(
+                                  forbiddenTimeList[index]['name']!,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                  ),
                                 ),
+                                Text(
+                                  "${index == 0
+                                      ? "${state.prayerTimes!.sunrise} - $sunriseLastTime"
+                                      : index == 1
+                                      ? "${state.prayerTimes!.midday} - $middayLastTime"
+                                      : index == 2
+                                      ? "${state.prayerTimes!.sunset} - $sunsetLastTime"
+                                      : null}",
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium!.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade700,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                top: 10,
+                                bottom: 30,
+                                left: 2,
+                                right: 2,
                               ),
-                            ],
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              top: 10,
-                              bottom: 30,
-                              left: 7,
-                              right: 7,
-                            ),
-                            child: Container(
-                              height: 5,
-                              width: 1.3,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
-                        itemCount: forbiddenTimeList.length,
+                              child: Container(
+                                height: 5,
+                                width: 1.3,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
+                          itemCount: forbiddenTimeList.length,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
 
                 // SizedBox(height: 30),

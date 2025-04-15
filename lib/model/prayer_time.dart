@@ -1,4 +1,9 @@
 class PrayerTimes {
+  final String? sahri;
+  final String? sunrise;
+  final String? israk;
+  final String? midday;
+  final String? sunset;
   final String fajr;
   final String johor;
   final String asor;
@@ -6,6 +11,11 @@ class PrayerTimes {
   final String isha;
 
   PrayerTimes({
+    this.sahri,
+    this.sunrise,
+    this.israk,
+    this.midday,
+    this.sunset,
     required this.fajr,
     required this.johor,
     required this.asor,
@@ -15,15 +25,25 @@ class PrayerTimes {
 
   factory PrayerTimes.fromJson(Map<String, dynamic> json) {
     return PrayerTimes(
-      fajr: json['fajr'] as String,
-      johor: json['johor'] as String,
-      asor: json['asor'] as String,
-      magrib: json['magrib'] as String,
-      isha: json['isha'] as String,
+      sahri: json['sahri']?.toString(),
+      sunrise: json['sunrise']?.toString(),
+      israk: json['israk']?.toString(),
+      midday: json['midday']?.toString(),
+      sunset: json['sunset']?.toString(),
+      fajr: json['fajr']?.toString() ?? '--:--',
+      johor: json['johor']?.toString() ?? '--:--',
+      asor: json['asor']?.toString() ?? '--:--',
+      magrib: json['magrib']?.toString() ?? '--:--',
+      isha: json['isha']?.toString() ?? '--:--',
     );
   }
 
   Map<String, dynamic> toJson() => {
+    if (sahri != null) 'sahri': sahri,
+    if (sunrise != null) 'sunrise': sunrise,
+    if (israk != null) 'israk': israk,
+    if (midday != null) 'midday': midday,
+    if (sunset != null) 'sunset': sunset,
     'fajr': fajr,
     'johor': johor,
     'asor': asor,

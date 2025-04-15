@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
@@ -17,6 +16,7 @@ Widget buildPrayerTimesList(PrayerTimes prayerTimes) {
               'Prayer Alarm Time',
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
             ),
+            SizedBox(height: 5),
             SizedBox(
               height: 170,
               child: ListView.separated(
@@ -46,19 +46,19 @@ Widget buildPrayerCard(
   String time;
   switch (index) {
     case 0:
-      time = "${prayerTimes.fajr} AM";
+      time = prayerTimes.fajr;
       break;
     case 1:
-      time = "${prayerTimes.johor} PM";
+      time = prayerTimes.johor;
       break;
     case 2:
-      time = "${prayerTimes.asor} PM";
+      time = prayerTimes.asor;
       break;
     case 3:
-      time = "${prayerTimes.magrib} PM";
+      time = prayerTimes.magrib;
       break;
     case 4:
-      time = "${prayerTimes.isha} PM";
+      time = prayerTimes.isha;
       break;
     default:
       time = '--:--';
@@ -114,7 +114,8 @@ Widget buildPrayerCard(
     children: [
       /// HORIZONTAL LIST VIEW
       SizedBox(
-        width: 140,
+        width: 125,
+        height: 160,
         child: Card(
           elevation: 3,
           margin: const EdgeInsets.symmetric(vertical: 8),
@@ -134,6 +135,7 @@ Widget buildPrayerCard(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
                     prayers[index]['icon'],
@@ -144,7 +146,7 @@ Widget buildPrayerCard(
                     placeholderBuilder:
                         (context) => CircularProgressIndicator.adaptive(),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 7),
                   Text(
                     prayers[index]['name'],
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -152,50 +154,50 @@ Widget buildPrayerCard(
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 4),
+
                   Text(
-                    time,
+                    time.toUpperCase(),
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 7,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Icon(
-                              CupertinoIcons.alarm,
-                              size: 22,
-                              color: Colors.grey.shade700,
-                            ),
-                            Text(
-                              "Set Alarm",
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodyMedium!.copyWith(
-                                fontSize: 13,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.grey.shade800,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  // SizedBox(height: 8),
+                  // GestureDetector(
+                  //   onTap: () {},
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.symmetric(
+                  //         horizontal: 8,
+                  //         vertical: 7,
+                  //       ),
+                  //       child: Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: [
+                  //           Icon(
+                  //             CupertinoIcons.alarm,
+                  //             size: 22,
+                  //             color: Colors.grey.shade700,
+                  //           ),
+                  //           Text(
+                  //             "Set Alarm",
+                  //             style: Theme.of(
+                  //               context,
+                  //             ).textTheme.bodyMedium!.copyWith(
+                  //               fontSize: 13,
+                  //               fontWeight: FontWeight.normal,
+                  //               color: Colors.grey.shade800,
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
