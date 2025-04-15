@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/utils/constant/colors.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
+import 'package:prayer_reminder/utils/helpers/convert.dart';
 
 Widget buildPrayerTimesList(PrayerTimes prayerTimes) {
   return Column(
@@ -46,19 +47,20 @@ Widget buildPrayerCard(
   String time;
   switch (index) {
     case 0:
-      time = prayerTimes.fajr;
+      time = subtractMinutesFromTime(prayerTimes.fajr, 15);
+      
       break;
     case 1:
-      time = prayerTimes.johor;
+      time = subtractMinutesFromTime(prayerTimes.johor, 15);;
       break;
     case 2:
-      time = prayerTimes.asor;
+      time = subtractMinutesFromTime(prayerTimes.asor, 15);
       break;
     case 3:
-      time = prayerTimes.magrib;
+      time = subtractMinutesFromTime(prayerTimes.magrib, 5);
       break;
     case 4:
-      time = prayerTimes.isha;
+      time = subtractMinutesFromTime(prayerTimes.isha, 15);
       break;
     default:
       time = '--:--';
