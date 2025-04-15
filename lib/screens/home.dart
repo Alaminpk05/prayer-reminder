@@ -28,6 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // updateTime();
 
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
+    final String a = subtractMinutesFromTime('11:02 pm', 15);
+    debugPrint('1111111111111111111111111111111111111111111111111111111');
+    debugPrint(a);
   }
 
   // void updateTime() {
@@ -73,11 +76,13 @@ class _HomeScreenState extends State<HomeScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ApiIntegrationSuccessState) {
             final waqto = checkWaqto(state.prayerTimes!);
+            debugPrint('________________________');
+            debugPrint(waqto);
             final String sunriseSub = subtractMinutesFromTime(
               state.prayerTimes!.sunrise.toString(),
               15,
             );
-              final String sunriseAdd= addMinutesFromTime(
+            final String sunriseAdd = addMinutesWithTime(
               state.prayerTimes!.sunrise.toString(),
               15,
             );
@@ -88,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
             );
 
             final String sunsetSub = subtractMinutesFromTime(
-              state.prayerTimes!.sunset.toString(),
+              state.prayerTimes!.sunset!,
               15,
             );
 
@@ -112,8 +117,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        waqto=='Fajr'?state.prayerTimes!.fajr:waqto=='Dhuhr'?state.prayerTimes!.johor:
-                        waqto=='Asr'?state.prayerTimes!.asor:waqto=='Magrib'?state.prayerTimes!.magrib:waqto=='Isha'?state.prayerTimes!.isha:'Forbidden time',
+                        waqto == 'Fajr'
+                            ? state.prayerTimes!.fajr
+                            : waqto == 'Dhuhr'
+                            ? state.prayerTimes!.johor
+                            : waqto == 'Asr'
+                            ? state.prayerTimes!.asor
+                            : waqto == 'Maghrib'
+                            ? state.prayerTimes!.magrib
+                            : waqto == 'Isha'
+                            ? state.prayerTimes!.isha
+                            : TimeOfDay.now().format(context),
                         style: Theme.of(
                           context,
                         ).textTheme.headlineLarge!.copyWith(
@@ -133,7 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   state: state,
                   sunriseLastTime: sunriseSub,
                   middayLastTime: middaySub,
-                  sunsetLastTime: sunsetSub, sunriseAdd: sunriseAdd,
+                  sunsetLastTime: sunsetSub,
+                  sunriseAdd: sunriseAdd,
                 ),
 
                 // SizedBox(height: 30),
@@ -175,7 +190,8 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
     required this.sunriseLastTime,
     required this.middayLastTime,
     required this.sunsetLastTime,
-    required this.state, required this.sunriseAdd,
+    required this.state,
+    required this.sunriseAdd,
   });
 
   final String sunriseLastTime;
