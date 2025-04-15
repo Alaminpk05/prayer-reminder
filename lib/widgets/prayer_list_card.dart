@@ -25,7 +25,6 @@ Widget buildPrayerTimesList(PrayerTimes prayerTimes) {
                 },
                 scrollDirection: Axis.horizontal,
                 itemCount: prayers.length,
-
                 itemBuilder: (context, index) {
                   return buildPrayerCard(index, prayerTimes, context);
                 },
@@ -65,75 +64,140 @@ Widget buildPrayerCard(
       time = '--:--';
   }
 
+  // Define gradient colors for each prayer
+  List<Color> gradientColors;
+  switch (index) {
+    case 0:
+      gradientColors = [
+        Color(0xFF6267C0),
+        Color(0xFF7A4EB8),
+        Color(0xFF8C38B0),
+      ];
+      break;
+    case 1:
+      gradientColors = [
+        Color(0xFFFEBF3E),
+        Color(0xFFD49561),
+        Color(0xFF8C38B0),
+      ];
+      break;
+    case 2: // Asr
+      gradientColors = [
+        Color(0xFF63A1E9),
+        Color(0xFF7370C9),
+        Color(0xFF8C38B0),
+      ];
+      break;
+    case 3:
+      gradientColors = [
+        Color(0xFFD79271),
+        Color(0xFFB46E86),
+        Color(0xFF8C38B0),
+      ];
+      break;
+    case 4: // Isha
+      gradientColors = [
+        Color(0xFF411671),
+        Color(0xFF6C2E93),
+        Color(0xFF8C38B0),
+      ];
+      break;
+    default:
+      gradientColors = [
+        Colors.grey,
+        Colors.grey.shade700,
+        Colors.grey.shade900,
+      ];
+  }
+
   return Column(
     children: [
       /// HORIZONTAL LIST VIEW
       SizedBox(
         width: 140,
         child: Card(
+          elevation: 3,
           margin: const EdgeInsets.symmetric(vertical: 8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Column(
-              children: [
-                SvgPicture.asset(
-                  prayers[index]['icon'],
-                  height: 30,
-                  width: 30,
-                  placeholderBuilder:
-                      (context) => CircularProgressIndicator.adaptive(),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  prayers[index]['name'],
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  time,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    decoration: BoxDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: gradientColors,
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 0.5, 1.0],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    prayers[index]['icon'],
+                    height: 30,
+                    width: 30,
+                    // ignore: deprecated_member_use
+                    color: Colors.white,
+                    placeholderBuilder:
+                        (context) => CircularProgressIndicator.adaptive(),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    prayers[index]['name'],
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 7,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    time,
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Icon(
-                            CupertinoIcons.alarm,
-                            size: 22,
-                            color: Colors.grey.shade600,
-                          ),
-                          Text(
-                            "Set Alarm",
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium!.copyWith(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 7,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Icon(
+                              CupertinoIcons.alarm,
+                              size: 22,
+                              color: Colors.grey.shade700,
                             ),
-                          ),
-                        ],
+                            Text(
+                              "Set Alarm",
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium!.copyWith(
+                                fontSize: 13,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
