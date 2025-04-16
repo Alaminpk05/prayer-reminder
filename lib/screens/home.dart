@@ -173,19 +173,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _scheduleAlarms(PrayerTimes prayerTimes) async {
-
-
-    final fajr=subtractMinutesFromTime(prayerTimes.fajr, 15);
-    final johor=subtractMinutesFromTime(prayerTimes.johor, 15);
-    final asr=subtractMinutesFromTime(prayerTimes.asor, 15);
-    final magrib=subtractMinutesFromTime(prayerTimes.magrib, 5);
-    final isha=subtractMinutesFromTime(prayerTimes.isha, 15);
+    final fajr = subtractMinutesFromTime(prayerTimes.fajr, 15);
+    final johor = subtractMinutesFromTime(prayerTimes.johor, 15);
+    final asr = subtractMinutesFromTime(prayerTimes.asor, 15);
+    final magrib = subtractMinutesFromTime(prayerTimes.magrib, 5);
+    final isha = subtractMinutesFromTime(prayerTimes.isha, 15);
+    debugPrint('-------------------------------------------');
+    debugPrint(fajr);
+    debugPrint(johor);
+    debugPrint(asr);
+    debugPrint(magrib);
+    debugPrint(isha);
     final times = {
-      'fajr': prayerTimes.fajr,
-      'johor': prayerTimes.johor,
-      'asor': prayerTimes.asor,
-      'magrib': prayerTimes.magrib,
-      'isha': prayerTimes.isha,
+      'fajr': fajr,
+      'johor': johor,
+      'asor': asr,
+      'magrib': magrib,
+      'isha': isha,
     };
 
     await AlarmService.schedulePrayerAlarms(times);
