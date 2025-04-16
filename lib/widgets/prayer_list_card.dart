@@ -15,7 +15,7 @@ Widget buildPrayerTimesList(PrayerTimes prayerTimes) {
           children: [
             const Text(
               'Prayer Alarm Time',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             SizedBox(height: 5),
             SizedBox(
@@ -103,8 +103,8 @@ Widget buildPrayerCard(
       break;
     case 4: // Isha
       gradientColors = [
-        Color.fromARGB(255, 11, 3, 19),
-        Color.fromARGB(255, 32, 15, 42),
+        Color.fromARGB(255, 50, 42, 57),
+        Color.fromARGB(255, 31, 16, 39),
         Color(0xFF8C38B0),
       ];
       break;

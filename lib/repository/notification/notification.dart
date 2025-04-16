@@ -112,7 +112,7 @@ final additionalFlags= Int32List.fromList(<int>[insistentFlag | ongoingFlag | no
       additionalFlags: additionalFlags,
       category: AndroidNotificationCategory.alarm,
       audioAttributesUsage: AudioAttributesUsage.alarm,
-      chronometerCountDown: false,
+      chronometerCountDown: true,
       setAsGroupSummary: true,
       usesChronometer: true,
       actions: const [

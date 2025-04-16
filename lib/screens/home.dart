@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
             final waqto = checkWaqto(state.prayerTimes!);
             debugPrint('________________________');
             debugPrint(waqto);
-         ;
+            ;
             final String sunriseAdd = addMinutesFromTime(
               state.prayerTimes!.sunrise.toString(),
               15,
@@ -100,40 +100,49 @@ class _HomeScreenState extends State<HomeScreen> {
                   margin: EdgeInsets.only(
                     left: 10,
                     right: 10,
-                    top: 8,
+                    top: 20,
                     bottom: 20,
                   ),
-                  child: Column(
-                    children: [
-                      Text(
-                        waqto,
-                        style: Theme.of(context).textTheme.titleMedium,
+                  child: Card.outlined(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
                       ),
-                      Text(
-                        waqto == 'Fajr'
-                            ? state.prayerTimes!.fajr
-                            : waqto == 'Dhuhr'
-                            ? state.prayerTimes!.johor
-                            : waqto == 'Asr'
-                            ? state.prayerTimes!.asor
-                            : waqto == 'Maghrib'
-                            ? state.prayerTimes!.magrib
-                            : waqto == 'Isha'
-                            ? state.prayerTimes!.isha
-                            : TimeOfDay.now().format(context),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.headlineLarge!.copyWith(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 40,
-                        ),
+                      child: Column(
+                        children: [
+                          Text(
+                            waqto == 'Fajr'
+                                ? state.prayerTimes!.fajr
+                                : waqto == 'Dhuhr'
+                                ? state.prayerTimes!.johor
+                                : waqto == 'Asr'
+                                ? state.prayerTimes!.asor
+                                : waqto == 'Maghrib'
+                                ? state.prayerTimes!.magrib
+                                : waqto == 'Isha'
+                                ? state.prayerTimes!.isha
+                                : TimeOfDay.now().format(context),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.headlineLarge!.copyWith(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 40,
+                            ),
+                          ),
+                          Text(
+                            waqto,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
+                SizedBox(height: 20),
                 // PRAYER TIME
                 buildPrayerTimesList(state.prayerTimes!),
-                SizedBox(height: 15),
+                SizedBox(height: 40),
 
                 ///FORBIDDEN PRAYER TIME SECTION
                 ForbiddenPrayerTimeWidget(
@@ -164,6 +173,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _scheduleAlarms(PrayerTimes prayerTimes) async {
+
+
+    final fajr=subtractMinutesFromTime(prayerTimes.fajr, 15);
+    final johor=subtractMinutesFromTime(prayerTimes.johor, 15);
+    final asr=subtractMinutesFromTime(prayerTimes.asor, 15);
+    final magrib=subtractMinutesFromTime(prayerTimes.magrib, 5);
+    final isha=subtractMinutesFromTime(prayerTimes.isha, 15);
     final times = {
       'fajr': prayerTimes.fajr,
       'johor': prayerTimes.johor,

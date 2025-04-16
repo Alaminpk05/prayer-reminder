@@ -38,6 +38,7 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
 
           SizedBox(
             height: 80,
+
             child: ListView.separated(
               padding: EdgeInsets.zero,
               shrinkWrap: true,
@@ -48,6 +49,9 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       prayers[index]['icon'],
+                      
+                      height: 30,
+                      width: 30,
                       // ignore: deprecated_member_use
                       color: Colors.grey.shade400,
                     ),
@@ -71,7 +75,7 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.w600,
                         color: Colors.grey.shade700,
-                        fontSize: 13,
+                        fontSize: 12.3,
                       ),
                     ),
                   ],
