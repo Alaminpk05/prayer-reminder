@@ -2,8 +2,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-
-
 @pragma('vm:entry-point')
 class NotificationServices {
   @pragma('vm:entry-point')
@@ -18,7 +16,7 @@ class NotificationServices {
   static Future<void> initialize() async {
     await _createPrayerNotificationChannel();
     const AndroidInitializationSettings androidInitializationSettings =
-        AndroidInitializationSettings("@mipmap/ic_launcher");
+        AndroidInitializationSettings("@mipmap/launcher_icon");
     const DarwinInitializationSettings iosInitializationSettings =
         DarwinInitializationSettings();
     const InitializationSettings initializationSettings =
@@ -32,32 +30,36 @@ class NotificationServices {
       onDidReceiveNotificationResponse: _onNotificationTap,
       onDidReceiveBackgroundNotificationResponse: _onNotificationTap,
     );
-    
+
     await _requestAndroidPermissions();
-    
   }
 
   static Future<void> _requestAndroidPermissions() async {
-    final androidPlugin = flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-  
-      await androidPlugin?.requestExactAlarmsPermission();
-      await androidPlugin?.requestNotificationsPermission();
+    final androidPlugin =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
+    await androidPlugin?.requestExactAlarmsPermission();
+    await androidPlugin?.requestNotificationsPermission();
+    await androidPlugin?.requestFullScreenIntentPermission();
     
   }
 
   @pragma('vm:entry-point')
   static Future<void> _createPrayerNotificationChannel() async {
-    final androidPlugin = flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
-    
+    final androidPlugin =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
     // Delete existing channel to force recreation
     await androidPlugin?.deleteNotificationChannel(_channelId);
 
     const vibrationPattern = [0, 500, 1000, 500];
-    
+
     final channel = AndroidNotificationChannel(
       _channelId,
       'Prayer Reminders',
@@ -69,8 +71,9 @@ class NotificationServices {
       playSound: true,
       showBadge: true,
       enableLights: true,
-      ledColor: Colors.green,
-      audioAttributesUsage: AudioAttributesUsage.alarm
+      ledColor: Colors.purpleAccent,
+      
+      audioAttributesUsage: AudioAttributesUsage.alarm,
     );
 
     await androidPlugin?.createNotificationChannel(channel);
@@ -79,13 +82,19 @@ class NotificationServices {
   @pragma('vm:entry-point')
   static Future<void> showPrayerNotification(String title, String body) async {
     const vibrationPattern = [0, 500, 1000, 500];
-    
+    // Combine multiple flags
+const insistentFlag = 4;  // FLAG_INSISTENT
+const ongoingFlag = 2;    // FLAG_ONGOING_EVENT
+const noClearFlag = 32;   // FLAG_NO_CLEAR
+
+final additionalFlags= Int32List.fromList(<int>[insistentFlag | ongoingFlag | noClearFlag]);
+
     final androidDetails = AndroidNotificationDetails(
       _channelId,
       'Prayer Reminders',
       channelDescription: 'Channel for prayer time notifications',
       importance: Importance.max,
-      priority: Priority.high,
+      priority: Priority.max,
       sound: const RawResourceAndroidNotificationSound(_soundFile),
       enableVibration: true,
       vibrationPattern: Int64List.fromList(vibrationPattern),
@@ -96,14 +105,16 @@ class NotificationServices {
       visibility: NotificationVisibility.public,
       fullScreenIntent: true,
       colorized: true,
-      color: Colors.green,
-      ledColor: Colors.green,
+      color: Colors.purple,
+      ledColor: Colors.purple,
       ledOnMs: 1000,
       ledOffMs: 500,
+      additionalFlags: additionalFlags,
       category: AndroidNotificationCategory.alarm,
       audioAttributesUsage: AudioAttributesUsage.alarm,
-      
-      timeoutAfter: 10000,
+      chronometerCountDown: false,
+      setAsGroupSummary: true,
+      usesChronometer: true,
       actions: const [
         AndroidNotificationAction(
           _cancelActionId,

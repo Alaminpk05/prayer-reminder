@@ -1,14 +1,12 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
-import 'package:prayer_reminder/utils/constant/list.dart';
 import 'package:prayer_reminder/utils/helpers/convert.dart';
+import 'package:prayer_reminder/widgets/forbidden_time.dart';
 import 'package:prayer_reminder/widgets/prayer_list_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,11 +24,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     // updateTime();
-
+    debugPrint('999999999999999999999999999999999999999999');
+    debugPrint(subtractMinutesFromTime('12:15 am', 5));
+    debugPrint(addMinutesFromTime('23:56 pm', 2));
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
-    final String a = subtractMinutesFromTime('11:02 pm', 15);
-    debugPrint('1111111111111111111111111111111111111111111111111111111');
-    debugPrint(a);
   }
 
   // void updateTime() {
@@ -82,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               state.prayerTimes!.sunrise.toString(),
               15,
             );
-            final String sunriseAdd = addMinutesWithTime(
+            final String sunriseAdd = addMinutesFromTime(
               state.prayerTimes!.sunrise.toString(),
               15,
             );
@@ -181,99 +178,5 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await AlarmService.schedulePrayerAlarms(times);
     debugPrint(' All prayer alarms scheduled successfully');
-  }
-}
-
-class ForbiddenPrayerTimeWidget extends StatelessWidget {
-  const ForbiddenPrayerTimeWidget({
-    super.key,
-    required this.sunriseLastTime,
-    required this.middayLastTime,
-    required this.sunsetLastTime,
-    required this.state,
-    required this.sunriseAdd,
-  });
-
-  final String sunriseLastTime;
-  final String middayLastTime;
-  final String sunsetLastTime;
-  final String sunriseAdd;
-  final state;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 6, bottom: 15),
-            child: Text(
-              'FORBIDDEN PRAYER TIME',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w700),
-            ),
-          ),
-
-          SizedBox(
-            height: 80,
-            child: ListView.separated(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    SvgPicture.asset(
-                      prayers[index]['icon'],
-                      // ignore: deprecated_member_use
-                      color: Colors.grey.shade400,
-                    ),
-                    SizedBox(height: 3),
-                    Text(
-                      forbiddenTimeList[index]['name']!,
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 13,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Text(
-                      "${index == 0
-                          ? "$sunriseLastTime - $sunriseAdd"
-                          : index == 1
-                          ? "$middayLastTime - ${state.prayerTimes!.midday} "
-                          : index == 2
-                          ? "$sunsetLastTime - ${state.prayerTimes!.sunset}"
-                          : null}",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade700,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                );
-              },
-              separatorBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    top: 10,
-                    bottom: 30,
-                    left: 2,
-                    right: 2,
-                  ),
-                  child: Container(height: 5, width: 1.3, color: Colors.grey),
-                );
-              },
-              itemCount: forbiddenTimeList.length,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
