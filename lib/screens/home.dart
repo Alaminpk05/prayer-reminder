@@ -75,10 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
             final waqto = checkWaqto(state.prayerTimes!);
             debugPrint('________________________');
             debugPrint(waqto);
-            final String sunriseSub = subtractMinutesFromTime(
-              state.prayerTimes!.sunrise.toString(),
-              15,
-            );
+         ;
             final String sunriseAdd = addMinutesFromTime(
               state.prayerTimes!.sunrise.toString(),
               15,
@@ -94,7 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
               15,
             );
 
-            debugPrint(sunriseSub);
             debugPrint(middaySub);
             debugPrint(sunsetSub);
             return Column(
@@ -142,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ///FORBIDDEN PRAYER TIME SECTION
                 ForbiddenPrayerTimeWidget(
                   state: state,
-                  sunriseLastTime: sunriseSub,
+                  sunriseLastTime: state.prayerTimes!.sunrise!,
                   middayLastTime: middaySub,
                   sunsetLastTime: sunsetSub,
                   sunriseAdd: sunriseAdd,

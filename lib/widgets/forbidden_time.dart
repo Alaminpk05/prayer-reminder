@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
 
 class ForbiddenPrayerTimeWidget extends StatelessWidget {
@@ -16,7 +17,7 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
   final String middayLastTime;
   final String sunsetLastTime;
   final String sunriseAdd;
-  final state;
+  final ApiIntegrationSuccessState state;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
                     ),
                     Text(
                       "${index == 0
-                          ? "$sunriseLastTime - $sunriseAdd"
+                          ? "${state.prayerTimes!.sunrise!} - $sunriseAdd"
                           : index == 1
                           ? "$middayLastTime - ${state.prayerTimes!.midday} "
                           : index == 2

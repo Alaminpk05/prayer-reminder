@@ -164,15 +164,12 @@ String checkWaqto(PrayerTimes prayerTimes) {
   debugPrint('Midday: ${midday.hour}:${midday.minute}');
 
   // 1. Check forbidden time after sunrise (15 minutes)
-  final sunriseForbiddenStart = TimeOfDay(
-    hour: sunrise.hour,
-    minute: sunrise.minute - 15,
-  );
+
   final sunriseForbiddenEnd = TimeOfDay(
     hour: sunrise.hour,
     minute: sunrise.minute + 15,
   );
-  if (isAfter(currentTime, sunriseForbiddenStart)&&isBefore(currentTime, sunriseForbiddenEnd)) {
+  if (isAfter(currentTime, sunrise)&&isBefore(currentTime, sunriseForbiddenEnd)) {
     return 'Prayer Forbidden (15 mins after sunrise)';
   }
 
@@ -182,7 +179,7 @@ String checkWaqto(PrayerTimes prayerTimes) {
     minute: midday.minute - 6,
   );
   if (isAfter(currentTime, middayForbiddenStart)&&isBefore(currentTime, midday)) {
-    return 'Prayer Forbidden (6 mins before Dhuhr)';
+    return 'Prayer Forbidden (6 mins before Midday)';
   }
   final sunsetStart = subtractMinutesFromTime(
     prayerTimes.sunset.toString(),
@@ -202,7 +199,7 @@ String checkWaqto(PrayerTimes prayerTimes) {
    else if (isAfter(currentTime, dhuhr) && isBefore(currentTime, asr)) {
     return 'Dhuhr';
   }
-   else if (isAfter(currentTime, asr)&&isBefore(currentTime,maghrib )) {
+   else if (isAfter(currentTime, asr)&&isBefore(currentTime,sunset )) {
     return 'Asor';
   }
    else if (isAfter(currentTime, maghrib)&&isBefore(currentTime, isha)) {
