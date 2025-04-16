@@ -48,10 +48,11 @@ Widget buildPrayerCard(
   switch (index) {
     case 0:
       time = subtractMinutesFromTime(prayerTimes.fajr, 15);
-      
+
       break;
     case 1:
-      time = subtractMinutesFromTime(prayerTimes.johor, 15);;
+      time = subtractMinutesFromTime(prayerTimes.johor, 15);
+      ;
       break;
     case 2:
       time = subtractMinutesFromTime(prayerTimes.asor, 15);
@@ -71,10 +72,11 @@ Widget buildPrayerCard(
   switch (index) {
     case 0:
       gradientColors = [
-        Color(0xFF6267C0),
-        Color(0xFF7A4EB8),
+        Color(0xFFD79271),
+        Color(0xFFB46E86),
         Color(0xFF8C38B0),
       ];
+
       break;
     case 1:
       gradientColors = [
@@ -82,25 +84,27 @@ Widget buildPrayerCard(
         Color(0xFFD49561),
         Color(0xFF8C38B0),
       ];
+
       break;
     case 2: // Asr
+
       gradientColors = [
-        Color(0xFF63A1E9),
-        Color(0xFF7370C9),
+        Color.fromARGB(255, 221, 91, 31),
+        Color(0xFFB46E86),
         Color(0xFF8C38B0),
       ];
       break;
     case 3:
       gradientColors = [
-        Color(0xFFD79271),
-        Color(0xFFB46E86),
+        Color.fromARGB(255, 48, 77, 110),
+        Color.fromARGB(255, 83, 81, 149),
         Color(0xFF8C38B0),
       ];
       break;
     case 4: // Isha
       gradientColors = [
-        Color(0xFF411671),
-        Color(0xFF6C2E93),
+        Color.fromARGB(255, 11, 3, 19),
+        Color.fromARGB(255, 32, 15, 42),
         Color(0xFF8C38B0),
       ];
       break;
