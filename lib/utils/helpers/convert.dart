@@ -108,6 +108,7 @@ String checkWaqto(PrayerTimes prayerTimes) {
 
   // Parse all prayer times
   final fajr = parseTime(prayerTimes.fajr);
+  final midNight = parseTime('11:59 pm');
   final sunrise = parseTime(prayerTimes.sunrise!);
   final dhuhr = parseTime(prayerTimes.johor);
   final asr = parseTime(prayerTimes.asor);
@@ -141,6 +142,7 @@ String checkWaqto(PrayerTimes prayerTimes) {
     return 'Payer Forbidden Time3';
   }
 
+
   // Check regular prayer times
   if (_isAfter(currentTime, fajr) && _isBefore(currentTime, sunrise)) {
     return 'Fajr';
@@ -150,10 +152,10 @@ String checkWaqto(PrayerTimes prayerTimes) {
     return 'Asr';
   } else if (_isAfter(currentTime, maghrib) && _isBefore(currentTime, isha)) {
     return 'Maghrib';
-  } else if (_isAfter(currentTime, isha) && _isBefore(currentTime, fajr)) {
+  } else if (_isAfter(currentTime, isha) && _isBefore(currentTime, midNight)) {
     return 'Isha';
   } else {
-    return 'No Waqto for Prayer';
+    return 'No Waqto for faroj Prayer';
   }
 }
 

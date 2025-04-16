@@ -25,11 +25,11 @@ class PrayerTimes {
 
   factory PrayerTimes.fromJson(Map<String, dynamic> json) {
     return PrayerTimes(
-      sahri: json['sahri']?.toString(),
-      sunrise: json['sunrise']?.toString(),
-      israk: json['israk']?.toString(),
-      midday: json['midday']?.toString(),
-      sunset: json['sunset']?.toString(),
+      sahri: json['sahri']?.toString()?? '--:--',
+      sunrise: json['sunrise']?.toString()?? '--:--',
+      israk: json['israk']?.toString()?? '--:--',
+      midday: json['midday']?.toString()?? '--:--',
+      sunset: json['sunset']?.toString()?? '--:--',
       fajr: json['fajr']?.toString() ?? '--:--',
       johor: json['johor']?.toString() ?? '--:--',
       asor: json['asor']?.toString() ?? '--:--',
