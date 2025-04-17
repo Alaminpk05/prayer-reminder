@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
-import 'package:prayer_reminder/utils/constant/colors.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
 import 'package:prayer_reminder/utils/helpers/convert.dart';
 import 'package:sizer/sizer.dart';
 
-Widget buildPrayerTimesList(PrayerTimes prayerTimes) {
+Widget buildPrayerTimesList(PrayerTimes prayerTimes, BuildContext context) {
   return Column(
     children: [
       Container(
-        color: prayerListBg,
+        margin: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 4),
         padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 4),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Prayer Alarm Time',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w700),
             ),
-            SizedBox(height: 5),
-            SizedBox(
-              height: 50.h,
-              child: ListView.separated(
-                shrinkWrap: true,
-
-                separatorBuilder: (context, index) {
-                  return SizedBox(width: 10);
-                },
-                scrollDirection: Axis.vertical,
-                itemCount: prayers.length,
-                itemBuilder: (context, index) {
-                  return buildPrayerCard(index, prayerTimes, context);
-                },
-              ),
+            SizedBox(height: 10),
+            Wrap(
+              spacing: 10, // horizontal spacing
+              runSpacing: 0, // vertical spacing
+              alignment: WrapAlignment.start,
+              children: List.generate(prayers.length, (index) {
+                return SizedBox(
+                  width:
+                      MediaQuery.of(context).size.width / 3 -
+                      20, // 3 items per row
+                  child: buildPrayerCard(index, prayerTimes, context),
+                );
+              }),
             ),
           ],
         ),
@@ -123,8 +121,8 @@ Widget buildPrayerCard(
     children: [
       /// HORIZONTAL LIST VIEW
       SizedBox(
-        height: 13.h,
-        width: double.infinity,
+        width: 125,
+        height: 160,
         child: Card(
           elevation: 3,
           margin: const EdgeInsets.symmetric(vertical: 8),
@@ -142,50 +140,35 @@ Widget buildPrayerCard(
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        prayers[index]['icon'],
-                        height: 50,
-                        width: 50,
-                        // ignore: deprecated_member_use
-                        color: Colors.white,
-                        placeholderBuilder:
-                            (context) => CircularProgressIndicator.adaptive(),
-                      ),
-                      SizedBox(width: 3.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            prayers[index]['name'],
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 19.sp,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            time.toUpperCase(),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  SvgPicture.asset(
+                    prayers[index]['icon'],
+                    height: 30,
+                    width: 30,
+                    // ignore: deprecated_member_use
+                    color: Colors.white,
+                    placeholderBuilder:
+                        (context) => CircularProgressIndicator.adaptive(),
+                  ),
+                  SizedBox(height: 7),
+                  Text(
+                    prayers[index]['name'],
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
 
+                  Text(
+                    time.toUpperCase(),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                   // SizedBox(height: 8),
                   // GestureDetector(
                   //   onTap: () {},

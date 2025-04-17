@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
+import 'package:sizer/sizer.dart';
 
 class ForbiddenPrayerTimeWidget extends StatelessWidget {
   const ForbiddenPrayerTimeWidget({
@@ -29,10 +30,8 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 6, bottom: 15),
             child: Text(
-              'FORBIDDEN PRAYER TIME',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w700),
+              'Forbidden Prayer Time',
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
             ),
           ),
 
@@ -49,7 +48,7 @@ class ForbiddenPrayerTimeWidget extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       prayers[index]['icon'],
-                      
+
                       height: 30,
                       width: 30,
                       // ignore: deprecated_member_use

@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
+import 'package:prayer_reminder/utils/constant/colors.dart';
 import 'package:prayer_reminder/utils/helpers/convert.dart';
 import 'package:prayer_reminder/widgets/forbidden_time.dart';
 import 'package:prayer_reminder/widgets/prayer_list_card.dart';
+import 'package:sizer/sizer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,31 +20,39 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-   Timer? _timer;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
 
-    // updateTime();
-    debugPrint('999999999999999999999999999999999999999999');
-    debugPrint(subtractMinutesFromTime('12:15 am', 5));
-    debugPrint(addMinutesFromTime('23:56 pm', 2));
+    updateTime();
+
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
   }
 
   void updateTime() {
     Timer.periodic(Duration(milliseconds: 500), (timer) {
       if (mounted) {
-        setState(() {});
+        setState(() {
+          debugPrint(timer.toString());
+        });
       }
     });
   }
 
   @override
   void dispose() {
-     _timer!.cancel();
+    _timer!.cancel();
     super.dispose();
+  }
+
+  String getFormattedHourMinute() {
+    return DateFormat('hh:mm:ss').format(DateTime.now()); // e.g. 04:21:34
+  }
+
+  String getAmPmPeriod() {
+    return DateFormat('a').format(DateTime.now()); // e.g. AM or PM
   }
 
   @override
@@ -51,9 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text('Prayer Reminder'),
             Text(
               DateFormat('dd MMMM EEEE').format(DateTime.now()),
-              style: Theme.of(context).textTheme.titleSmall,
+              style: Theme.of(context).textTheme.labelMedium,
             ),
           ],
         ),
@@ -80,17 +92,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 state.prayerTimes!.sunrise.toString(),
                 15,
               );
-        
+
               final String middaySub = subtractMinutesFromTime(
                 state.prayerTimes!.midday.toString(),
                 6,
               );
-        
+
               final String sunsetSub = subtractMinutesFromTime(
                 state.prayerTimes!.sunset!,
                 15,
               );
-        
+
               debugPrint(middaySub);
               debugPrint(sunsetSub);
               return Column(
@@ -100,8 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     margin: EdgeInsets.only(
                       left: 10,
                       right: 10,
-                      top: 20,
-                      bottom: 20,
+                      top: 25,
+                      bottom: 10,
                     ),
                     child: Card.outlined(
                       child: Padding(
@@ -111,15 +123,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: Column(
                           children: [
-                            Text(
-                             _timer.toString(),
-                              style: Theme.of(
-                                context,
-                              ).textTheme.headlineLarge!.copyWith(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 40,
+                            Text.rich(
+                              TextSpan(
+                                text: getFormattedHourMinute(),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineLarge!.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 40,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: ' ${getAmPmPeriod()}',
+                                    style: TextStyle(
+                                      fontSize: 18, // Smaller font for AM/PM
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
+
                             Text(
                               waqto,
                               style: Theme.of(context).textTheme.titleMedium,
@@ -129,11 +153,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  
+                  SizedBox(height: 2.h),
                   // PRAYER TIME
-                  buildPrayerTimesList(state.prayerTimes!),
-                 
-        
+                  buildPrayerTimesList(state.prayerTimes!, context),
+                  SizedBox(height: 3.h),
+
                   ///FORBIDDEN PRAYER TIME SECTION
                   ForbiddenPrayerTimeWidget(
                     state: state,
@@ -142,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     sunsetLastTime: sunsetSub,
                     sunriseAdd: sunriseAdd,
                   ),
-        
+
                   // SizedBox(height: 30),
                   // ElevatedButton(
                   //   onPressed: () async {
