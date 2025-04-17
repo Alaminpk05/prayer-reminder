@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
+import 'package:prayer_reminder/repository/notification/notification.dart';
 import 'package:prayer_reminder/utils/constant/colors.dart';
 import 'package:prayer_reminder/utils/helpers/convert.dart';
 import 'package:prayer_reminder/widgets/forbidden_time.dart';
@@ -167,16 +168,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     sunriseAdd: sunriseAdd,
                   ),
 
-                  // SizedBox(height: 30),
-                  // ElevatedButton(
-                  //   onPressed: () async {
-                  //     await NotificationServices.showPrayerNotification(
-                  //       'salat name',
-                  //       'salat body',
-                  //     );
-                  //   },
-                  //   child: Text('send instant notification'),
-                  // ),
+                  SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await NotificationServices.showPrayerNotification(
+                        'salat name',
+                        'salat body',
+                      );
+                    },
+                    child: Text('send instant notification'),
+                  ),
                 ],
               );
             }
