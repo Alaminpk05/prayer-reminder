@@ -103,12 +103,12 @@ final additionalFlags= Int32List.fromList(<int>[insistentFlag | ongoingFlag | no
       autoCancel: false,
       showWhen: false,
       visibility: NotificationVisibility.public,
-      fullScreenIntent: true,
       colorized: true,
       color: Colors.purple,
       ledColor: Colors.purple,
       ledOnMs: 1000,
       ledOffMs: 500,
+
       additionalFlags: additionalFlags,
       category: AndroidNotificationCategory.alarm,
       audioAttributesUsage: AudioAttributesUsage.alarm,

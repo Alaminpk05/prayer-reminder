@@ -193,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final asr = subtractMinutesFromTime(prayerTimes.asor, 15);
     final magrib = subtractMinutesFromTime(prayerTimes.magrib, 5);
     final isha = subtractMinutesFromTime(prayerTimes.isha, 15);
-    debugPrint('-------------------------------------------');
+    debugPrint('ALARM TIME @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     debugPrint(fajr);
     debugPrint(johor);
     debugPrint(asr);
