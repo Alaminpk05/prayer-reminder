@@ -4,6 +4,7 @@ import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/utils/constant/colors.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
 import 'package:prayer_reminder/utils/helpers/convert.dart';
+import 'package:sizer/sizer.dart';
 
 Widget buildPrayerTimesList(PrayerTimes prayerTimes) {
   return Column(
@@ -19,12 +20,14 @@ Widget buildPrayerTimesList(PrayerTimes prayerTimes) {
             ),
             SizedBox(height: 5),
             SizedBox(
-              height: 170,
+              height: 50.h,
               child: ListView.separated(
+                shrinkWrap: true,
+
                 separatorBuilder: (context, index) {
                   return SizedBox(width: 10);
                 },
-                scrollDirection: Axis.horizontal,
+                scrollDirection: Axis.vertical,
                 itemCount: prayers.length,
                 itemBuilder: (context, index) {
                   return buildPrayerCard(index, prayerTimes, context);
@@ -52,7 +55,7 @@ Widget buildPrayerCard(
       break;
     case 1:
       time = subtractMinutesFromTime(prayerTimes.johor, 15);
-      ;
+
       break;
     case 2:
       time = subtractMinutesFromTime(prayerTimes.asor, 15);
@@ -120,8 +123,8 @@ Widget buildPrayerCard(
     children: [
       /// HORIZONTAL LIST VIEW
       SizedBox(
-        width: 125,
-        height: 160,
+        height: 13.h,
+        width: double.infinity,
         child: Card(
           elevation: 3,
           margin: const EdgeInsets.symmetric(vertical: 8),
@@ -139,35 +142,50 @@ Widget buildPrayerCard(
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 8),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset(
-                    prayers[index]['icon'],
-                    height: 30,
-                    width: 30,
-                    // ignore: deprecated_member_use
-                    color: Colors.white,
-                    placeholderBuilder:
-                        (context) => CircularProgressIndicator.adaptive(),
-                  ),
-                  SizedBox(height: 7),
-                  Text(
-                    prayers[index]['name'],
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        prayers[index]['icon'],
+                        height: 50,
+                        width: 50,
+                        // ignore: deprecated_member_use
+                        color: Colors.white,
+                        placeholderBuilder:
+                            (context) => CircularProgressIndicator.adaptive(),
+                      ),
+                      SizedBox(width: 3.w),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            prayers[index]['name'],
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 19.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            time.toUpperCase(),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
 
-                  Text(
-                    time.toUpperCase(),
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
                   // SizedBox(height: 8),
                   // GestureDetector(
                   //   onTap: () {},

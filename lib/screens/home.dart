@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Timer? _timer;
+   Timer? _timer;
 
   @override
   void initState() {
@@ -30,17 +30,17 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<ApiIntegrationBloc>().add(FetchPayerTimeApiEvent());
   }
 
-  // void updateTime() {
-  //   Timer.periodic(Duration(milliseconds: 500), (timer) {
-  //     if (mounted) {
-  //       setState(() {});
-  //     }
-  //   });
-  // }
+  void updateTime() {
+    Timer.periodic(Duration(milliseconds: 500), (timer) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
 
   @override
   void dispose() {
-    _timer!.cancel();
+     _timer!.cancel();
     super.dispose();
   }
 
@@ -58,116 +58,107 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: BlocConsumer<ApiIntegrationBloc, ApiIntegrationState>(
-        listener: (context, state) {
-          if (state is ApiIntegrationSuccessState) {
-            _scheduleAlarms(state.prayerTimes!);
-          } else if (state is ApiIntegrationErrorState) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
-          }
-        },
-        builder: (context, state) {
-          if (state is ApiIntegrationLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ApiIntegrationSuccessState) {
-            final waqto = checkWaqto(state.prayerTimes!);
-            debugPrint('________________________');
-            debugPrint(waqto);
-            ;
-            final String sunriseAdd = addMinutesFromTime(
-              state.prayerTimes!.sunrise.toString(),
-              15,
-            );
-
-            final String middaySub = subtractMinutesFromTime(
-              state.prayerTimes!.midday.toString(),
-              6,
-            );
-
-            final String sunsetSub = subtractMinutesFromTime(
-              state.prayerTimes!.sunset!,
-              15,
-            );
-
-            debugPrint(middaySub);
-            debugPrint(sunsetSub);
-            return Column(
-              children: [
-                // Header
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 10,
-                    right: 10,
-                    top: 20,
-                    bottom: 20,
-                  ),
-                  child: Card.outlined(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 10,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            waqto == 'Fajr'
-                                ? state.prayerTimes!.fajr
-                                : waqto == 'Dhuhr'
-                                ? state.prayerTimes!.johor
-                                : waqto == 'Asr'
-                                ? state.prayerTimes!.asor
-                                : waqto == 'Maghrib'
-                                ? state.prayerTimes!.magrib
-                                : waqto == 'Isha'
-                                ? state.prayerTimes!.isha
-                                : TimeOfDay.now().format(context),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.headlineLarge!.copyWith(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 40,
+      body: SingleChildScrollView(
+        child: BlocConsumer<ApiIntegrationBloc, ApiIntegrationState>(
+          listener: (context, state) {
+            if (state is ApiIntegrationSuccessState) {
+              _scheduleAlarms(state.prayerTimes!);
+            } else if (state is ApiIntegrationErrorState) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            }
+          },
+          builder: (context, state) {
+            if (state is ApiIntegrationLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ApiIntegrationSuccessState) {
+              final waqto = checkWaqto(state.prayerTimes!);
+              debugPrint('________________________');
+              debugPrint(waqto);
+              final String sunriseAdd = addMinutesFromTime(
+                state.prayerTimes!.sunrise.toString(),
+                15,
+              );
+        
+              final String middaySub = subtractMinutesFromTime(
+                state.prayerTimes!.midday.toString(),
+                6,
+              );
+        
+              final String sunsetSub = subtractMinutesFromTime(
+                state.prayerTimes!.sunset!,
+                15,
+              );
+        
+              debugPrint(middaySub);
+              debugPrint(sunsetSub);
+              return Column(
+                children: [
+                  // Header
+                  Container(
+                    margin: EdgeInsets.only(
+                      left: 10,
+                      right: 10,
+                      top: 20,
+                      bottom: 20,
+                    ),
+                    child: Card.outlined(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 10,
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                             _timer.toString(),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.headlineLarge!.copyWith(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 40,
+                              ),
                             ),
-                          ),
-                          Text(
-                            waqto,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
+                            Text(
+                              waqto,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
-                // PRAYER TIME
-                buildPrayerTimesList(state.prayerTimes!),
-                SizedBox(height: 40),
-
-                ///FORBIDDEN PRAYER TIME SECTION
-                ForbiddenPrayerTimeWidget(
-                  state: state,
-                  sunriseLastTime: state.prayerTimes!.sunrise!,
-                  middayLastTime: middaySub,
-                  sunsetLastTime: sunsetSub,
-                  sunriseAdd: sunriseAdd,
-                ),
-
-                // SizedBox(height: 30),
-                // ElevatedButton(
-                //   onPressed: () async {
-                //     await NotificationServices.showPrayerNotification(
-                //       'salat name',
-                //       'salat body',
-                //     );
-                //   },
-                //   child: Text('send instant notification'),
-                // ),
-              ],
-            );
-          }
-          return const Center(child: Text('No prayer times available'));
-        },
+                  
+                  // PRAYER TIME
+                  buildPrayerTimesList(state.prayerTimes!),
+                 
+        
+                  ///FORBIDDEN PRAYER TIME SECTION
+                  ForbiddenPrayerTimeWidget(
+                    state: state,
+                    sunriseLastTime: state.prayerTimes!.sunrise!,
+                    middayLastTime: middaySub,
+                    sunsetLastTime: sunsetSub,
+                    sunriseAdd: sunriseAdd,
+                  ),
+        
+                  // SizedBox(height: 30),
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     await NotificationServices.showPrayerNotification(
+                  //       'salat name',
+                  //       'salat body',
+                  //     );
+                  //   },
+                  //   child: Text('send instant notification'),
+                  // ),
+                ],
+              );
+            }
+            return const Center(child: Text('No prayer times available'));
+          },
+        ),
       ),
     );
   }

@@ -11,6 +11,7 @@ import 'package:prayer_reminder/repository/notification/notification.dart';
 import 'package:prayer_reminder/screens/home.dart';
 import 'package:prayer_reminder/utils/helpers/permission/permission.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sizer/sizer.dart';
 
 @pragma('vm:entry-point')
 void alarmCallback(int id, Map<String, dynamic> params) async {
@@ -46,14 +47,14 @@ Future<void> main() async {
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
-   
+
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory:
         kIsWeb
             ? HydratedStorageDirectory.web
             : HydratedStorageDirectory((await getTemporaryDirectory()).path),
   );
-  runApp( MyApp(prefs:prefs ,));
+  runApp(MyApp(prefs: prefs));
 }
 
 class MyApp extends StatelessWidget {
@@ -62,31 +63,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create:
-              (context) => ApiIntegrationBloc(
-                PrayerTimeApiService(),
-                InternetConnection(),
-                prefs,
-              ),
+    return Sizer(
+      builder: (context, orientation, screenType) {
+        return        MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create:
+                (context) => ApiIntegrationBloc(
+                  PrayerTimeApiService(),
+                  InternetConnection(),
+                  prefs,
+                ),
+          ),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: [],
+          supportedLocales: [Locale('en'), Locale('ar')],
+          title: 'Prayer Reminder',
+          theme: ThemeData(primarySwatch: Colors.blue),
+
+          home: const HomeScreen(),
+          debugShowCheckedModeBanner: false,
         ),
-      ],
-      child: MaterialApp(
-        localizationsDelegates: [
+      );
+      },
 
-        ],
-        supportedLocales: [
-          Locale('en'),
-          Locale('ar')
-        ],
-        title: 'Prayer Reminder',
-        theme: ThemeData(primarySwatch: Colors.blue),
-
-        home: const HomeScreen(),
-        debugShowCheckedModeBanner: false,
-      ),
     );
   }
 }
