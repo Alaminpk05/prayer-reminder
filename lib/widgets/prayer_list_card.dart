@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
+import 'package:prayer_reminder/screens/details_page.dart';
 import 'package:prayer_reminder/utils/constant/list.dart';
 import 'package:prayer_reminder/utils/helpers/convert.dart';
 import 'package:sizer/sizer.dart';
@@ -28,7 +29,18 @@ Widget buildPrayerTimesList(PrayerTimes prayerTimes, BuildContext context) {
                   width:
                       MediaQuery.of(context).size.width / 3 -
                       20, // 3 items per row
-                  child: buildPrayerCard(index, prayerTimes, context),
+                  child: buildPrayerCard(index, prayerTimes, context, () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (_) => DetailsPage(
+                              title: prayers[index]['name'],
+                              icon: prayers[index]['icon'],
+                            ),
+                      ),
+                    );
+                  }),
                 );
               }),
             ),
@@ -44,6 +56,7 @@ Widget buildPrayerCard(
   int index,
   PrayerTimes prayerTimes,
   BuildContext context,
+  void Function()? onTap,
 ) {
   String time;
   switch (index) {
@@ -65,7 +78,7 @@ Widget buildPrayerCard(
       time = subtractMinutesFromTime(prayerTimes.isha, 15);
       break;
     case 5:
-      time = prayerTimes.israk!;
+      time = prayerTimes.israk;
       break;
     default:
       time = '--:--';
@@ -127,100 +140,106 @@ Widget buildPrayerCard(
       ];
   }
 
-  return Column(
-    children: [
-      /// HORIZONTAL LIST VIEW
-      SizedBox(
-        width: 125,
-        height: 160,
-        child: Card(
-          elevation: 3,
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
+  return GestureDetector(
+    onTap: onTap,
+    child: Column(
+      children: [
+        /// HORIZONTAL LIST VIEW
+        SizedBox(
+          width: 125,
+          height: 160,
+          child: Card(
+            elevation: 3,
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              gradient: LinearGradient(
-                colors: gradientColors,
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.0, 0.5, 1.0],
-              ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    prayers[index]['icon'],
-                    height: 30,
-                    width: 30,
-                    // ignore: deprecated_member_use
-                    color: Colors.white,
-                    placeholderBuilder:
-                        (context) => CircularProgressIndicator.adaptive(),
-                  ),
-                  SizedBox(height: 7),
-                  Text(
-                    prayers[index]['name'],
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                  colors: gradientColors,
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      prayers[index]['icon'],
+                      height: 30,
+                      width: 30,
+                      // ignore: deprecated_member_use
                       color: Colors.white,
+                      placeholderBuilder:
+                          (context) => CircularProgressIndicator.adaptive(),
                     ),
-                  ),
+                    SizedBox(height: 7),
+                    Text(
+                      prayers[index]['name'],
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
 
-                  Text(
-                    time.toUpperCase(),
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    Text(
+                      time.toUpperCase(),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  // SizedBox(height: 8),
-                  // GestureDetector(
-                  //   onTap: () {},
-                  //   child: Container(
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.white,
-                  //       borderRadius: BorderRadius.circular(8),
-                  //     ),
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.symmetric(
-                  //         horizontal: 8,
-                  //         vertical: 7,
-                  //       ),
-                  //       child: Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //         children: [
-                  //           Icon(
-                  //             CupertinoIcons.alarm,
-                  //             size: 22,
-                  //             color: Colors.grey.shade700,
-                  //           ),
-                  //           Text(
-                  //             "Set Alarm",
-                  //             style: Theme.of(
-                  //               context,
-                  //             ).textTheme.bodyMedium!.copyWith(
-                  //               fontSize: 13,
-                  //               fontWeight: FontWeight.normal,
-                  //               color: Colors.grey.shade800,
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
+                    // SizedBox(height: 8),
+                    // GestureDetector(
+                    //   onTap: () {},
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.circular(8),
+                    //     ),
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 8,
+                    //         vertical: 7,
+                    //       ),
+                    //       child: Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [
+                    //           Icon(
+                    //             CupertinoIcons.alarm,
+                    //             size: 22,
+                    //             color: Colors.grey.shade700,
+                    //           ),
+                    //           Text(
+                    //             "Set Alarm",
+                    //             style: Theme.of(
+                    //               context,
+                    //             ).textTheme.bodyMedium!.copyWith(
+                    //               fontSize: 13,
+                    //               fontWeight: FontWeight.normal,
+                    //               color: Colors.grey.shade800,
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-    ],
+      ],
+    ),
   );
 }

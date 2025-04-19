@@ -1,10 +1,11 @@
 final List<Map<String, dynamic>> prayers = [
   {'name': 'Fajr', 'icon': 'assets/icons/sunrise.svg'},
+  {'name': 'Israk', 'icon': 'assets/icons/haze-moon.svg'},
   {'name': 'Johor', 'icon': 'assets/icons/sun-high.svg'},
   {'name': 'Asor', 'icon': 'assets/icons/sunset.svg'},
   {'name': 'Magrib', 'icon': 'assets/icons/asr.svg'},
   {'name': 'Isha', 'icon': 'assets/icons/moon.svg'},
-  {'name': 'israk', 'icon': 'assets/icons/haze-moon.svg'},
+
 ];
 
 final List<Map<String,String>>forbiddenTimeList =[

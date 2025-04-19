@@ -16,7 +16,7 @@ import 'package:sizer/sizer.dart';
 @pragma('vm:entry-point')
 void alarmCallback(int id, Map<String, dynamic> params) async {
   final title = params['name'] as String;
-  final body = "It's time to pray";
+  final body = "It's time to perform your $title salat";
 
   // Show persistent notification
   await NotificationServices.showPrayerNotification(title, body);

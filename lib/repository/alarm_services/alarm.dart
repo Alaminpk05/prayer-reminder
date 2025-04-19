@@ -17,11 +17,11 @@ class AlarmService {
 
     final alarms = [
       {'id': 1, 'time': prayerTimes['fajr']!, 'name': 'Fajr'},
-      {'id': 2, 'time': prayerTimes['johor']!, 'name': 'Dhuhr'},
-      {'id': 3, 'time': prayerTimes['asor']!, 'name': 'Asr'},
-      {'id': 4, 'time': prayerTimes['magrib']!, 'name': 'Maghrib'}, // Fixed spelling
-      {'id': 5, 'time': prayerTimes['isha']!, 'name': 'Isha'},
-      {'id': 6, 'time': prayerTimes['israk']!, 'name': 'israk'},
+      {'id': 2, 'time': prayerTimes['israk']!, 'name': 'Israk'},
+      {'id': 3, 'time': prayerTimes['johor']!, 'name': 'Dhuhr'},
+      {'id': 4, 'time': prayerTimes['asor']!, 'name': 'Asr'},
+      {'id': 5, 'time': prayerTimes['magrib']!, 'name': 'Maghrib'},
+      {'id': 6, 'time': prayerTimes['isha']!, 'name': 'Isha'},
     ];
 
     for (final alarm in alarms) {
@@ -43,7 +43,7 @@ class AlarmService {
       // Parse the time string (e.g., "05:20 am" or "01:30 pm")
       final timeParts = timeString.split(' ');
       final timeComponents = timeParts[0].split(':');
-      
+
       int hour = int.parse(timeComponents[0]);
       final minute = int.parse(timeComponents[1]);
       final period = timeParts[1].toLowerCase();
