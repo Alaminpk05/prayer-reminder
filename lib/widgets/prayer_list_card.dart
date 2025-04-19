@@ -35,6 +35,7 @@ Widget buildPrayerTimesList(PrayerTimes prayerTimes, BuildContext context) {
                       MaterialPageRoute(
                         builder:
                             (_) => DetailsPage(
+                              prayerTimes:prayerTimes,
                               title: prayers[index]['name'],
                               icon: prayers[index]['icon'],
                             ),

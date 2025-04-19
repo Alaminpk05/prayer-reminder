@@ -25,7 +25,7 @@ class AlarmService {
     ];
 
     for (final alarm in alarms) {
-      await _scheduleSingleAlarm(
+      await scheduleSingleAlarm(
         alarm['id'] as int,
         alarm['time'] as String,
         alarm['name'] as String,
@@ -34,7 +34,7 @@ class AlarmService {
   }
 
   @pragma('vm:entry-point')
-  static Future<void> _scheduleSingleAlarm(
+  static Future<void> scheduleSingleAlarm(
     int id,
     String timeString,
     String name,
