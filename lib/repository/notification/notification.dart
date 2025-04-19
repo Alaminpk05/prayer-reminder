@@ -102,7 +102,7 @@ final additionalFlags= Int32List.fromList(<int>[insistentFlag | ongoingFlag | no
       ongoing: true,
       autoCancel: false,
       showWhen: false,
-      fullScreenIntent: true,
+      fullScreenIntent: false,
       visibility: NotificationVisibility.public,
       colorized: true,
       color: Colors.purple,

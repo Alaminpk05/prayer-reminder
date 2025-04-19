@@ -94,6 +94,7 @@ flutter:
     - assets/icons/sunset.svg
     - assets/icons/asr.svg
     - assets/icons/moon.svg
+    - assets/icons/haze-moon.svg
     - assets/json/forbidden_time.json
   #   - images/a_dot_ham.jpeg
 

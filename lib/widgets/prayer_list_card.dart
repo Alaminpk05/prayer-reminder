@@ -64,6 +64,9 @@ Widget buildPrayerCard(
     case 4:
       time = subtractMinutesFromTime(prayerTimes.isha, 15);
       break;
+    case 5:
+      time = prayerTimes.israk!;
+      break;
     default:
       time = '--:--';
   }
@@ -107,6 +110,13 @@ Widget buildPrayerCard(
         Color.fromARGB(255, 50, 42, 57),
         Color.fromARGB(255, 31, 16, 39),
         Color(0xFF8C38B0),
+      ];
+      break;
+    case 5: // Isha
+      gradientColors = [
+        Color.fromARGB(255, 50, 42, 57),
+        Color.fromARGB(255, 31, 16, 39),
+        Colors.grey.shade900,
       ];
       break;
     default:

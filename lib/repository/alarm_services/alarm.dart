@@ -21,6 +21,7 @@ class AlarmService {
       {'id': 3, 'time': prayerTimes['asor']!, 'name': 'Asr'},
       {'id': 4, 'time': prayerTimes['magrib']!, 'name': 'Maghrib'}, // Fixed spelling
       {'id': 5, 'time': prayerTimes['isha']!, 'name': 'Isha'},
+      {'id': 6, 'time': prayerTimes['israk']!, 'name': 'israk'},
     ];
 
     for (final alarm in alarms) {
@@ -89,7 +90,7 @@ class AlarmService {
   @pragma('vm:entry-point')
   static Future<void> _cancelAllAlarms() async {
     // Cancel all 5 prayer alarms
-    for (int id = 1; id <= 5; id++) {
+    for (int id = 1; id <= 6; id++) {
       await AndroidAlarmManager.cancel(id);
     }
   }

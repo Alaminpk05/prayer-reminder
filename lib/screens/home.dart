@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +6,7 @@ import 'package:prayer_reminder/bloc/api/api_integration_bloc.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
 import 'package:prayer_reminder/repository/alarm_services/alarm.dart';
 import 'package:prayer_reminder/repository/notification/notification.dart';
-import 'package:prayer_reminder/utils/constant/colors.dart';
+
 import 'package:prayer_reminder/utils/helpers/convert.dart';
 import 'package:prayer_reminder/widgets/forbidden_time.dart';
 import 'package:prayer_reminder/widgets/prayer_list_card.dart';
@@ -36,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Timer.periodic(Duration(milliseconds: 500), (timer) {
       if (mounted) {
         setState(() {
-          debugPrint(timer.toString());
+         
         });
       }
     });
@@ -194,12 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final asr = subtractMinutesFromTime(prayerTimes.asor, 15);
     final magrib = subtractMinutesFromTime(prayerTimes.magrib, 5);
     final isha = subtractMinutesFromTime(prayerTimes.isha, 15);
-    debugPrint('ALARM TIME @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-    debugPrint(fajr);
-    debugPrint(johor);
-    debugPrint(asr);
-    debugPrint(magrib);
-    debugPrint(isha);
+
     final times = {
       'fajr': fajr,
       'johor': johor,
@@ -210,5 +204,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await AlarmService.schedulePrayerAlarms(times);
     debugPrint(' All prayer alarms scheduled successfully');
+    debugPrint('ALARM TIME @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+    debugPrint(fajr);
+    debugPrint(johor);
+    debugPrint(asr);
+    debugPrint(magrib);
+    debugPrint(isha);
   }
 }
