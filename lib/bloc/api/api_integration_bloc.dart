@@ -15,7 +15,7 @@ class ApiIntegrationBloc extends Bloc<ApiIntegrationEvent, ApiIntegrationState> 
   final PrayerTimeApiService _prayerTimeApiService;
   final InternetConnection _internetConnection;
   final SharedPreferences _prefs;
-  static const _cacheDuration = Duration(hours: 1); // 24 hour cache duration
+  static const _cacheDuration = Duration(hours: 0); // 24 hour cache duration
 
   ApiIntegrationBloc(
     this._prayerTimeApiService,

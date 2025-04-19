@@ -1,7 +1,7 @@
 class PrayerTimes {
   final String? sahri;
   final String? sunrise;
-  final String? israk;
+  final String israk;
   final String? midday;
   final String? sunset;
   final String fajr;
@@ -13,7 +13,7 @@ class PrayerTimes {
   PrayerTimes({
     this.sahri,
     this.sunrise,
-    this.israk,
+    required this.israk,
     this.midday,
     this.sunset,
     required this.fajr,
@@ -41,7 +41,7 @@ class PrayerTimes {
   Map<String, dynamic> toJson() => {
     if (sahri != null) 'sahri': sahri,
     if (sunrise != null) 'sunrise': sunrise,
-    if (israk != null) 'israk': israk,
+    'israk': israk,
     if (midday != null) 'midday': midday,
     if (sunset != null) 'sunset': sunset,
     'fajr': fajr,

@@ -78,9 +78,9 @@ class AlarmService {
       );
 
       if (kDebugMode) {
-        print(
-          '⏰ Scheduled $name at ${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
-        );
+        // print(
+        //   '⏰ Scheduled $name at ${alarmTime.hour.toString().padLeft(2, '0')}:${alarmTime.minute.toString().padLeft(2, '0')}',
+        // );
       }
     } catch (e) {
       debugPrint('Error scheduling $name alarm: $e');

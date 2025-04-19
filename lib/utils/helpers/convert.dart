@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prayer_reminder/model/prayer_time.dart';
+import 'package:prayer_reminder/utils/constant/const.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String subtractMinutesFromTime(String timeString, int minutes) {
   try {
@@ -97,7 +99,7 @@ String checkWaqto(PrayerTimes prayerTimes) {
   final now = DateTime.now();
   final currentTime = TimeOfDay.fromDateTime(now);
 
-  debugPrint('Current Time: ${currentTime.hour}:${currentTime.minute}');
+  // debugPrint('Current Time: ${currentTime.hour}:${currentTime.minute}');
 
   // Parse time string to TimeOfDay (24-hour format)
   TimeOfDay parseTime(String timeString) {
@@ -142,8 +144,7 @@ String checkWaqto(PrayerTimes prayerTimes) {
     }
   }
 
-
-    /// waqt time
+  /// waqt time
   String fajrWaqt = subtractMinutesFromTime(prayerTimes.fajr, 15);
   String johorWaqt = subtractMinutesFromTime(prayerTimes.johor, 15);
   String asorWaqt = subtractMinutesFromTime(prayerTimes.asor, 15);
@@ -153,6 +154,8 @@ String checkWaqto(PrayerTimes prayerTimes) {
   // Parse all prayer times
   final fajr = parseTime(fajrWaqt);
   final sunrise = parseTime(prayerTimes.sunrise!);
+  final israk = parseTime(prayerTimes.israk);
+
   final dhuhr = parseTime(johorWaqt);
   final asr = parseTime(asorWaqt);
   final maghrib = parseTime(magribWaqt);
@@ -161,24 +164,22 @@ String checkWaqto(PrayerTimes prayerTimes) {
   final midday = parseTime(prayerTimes.midday!);
   final midNight = const TimeOfDay(hour: 23, minute: 59);
 
-  debugPrint('⏰ Prayer Times (24-hour format):');
-  debugPrint('Fajr: ${fajr.hour}:${fajr.minute}');
-  debugPrint('Sunrise: ${sunrise.hour}:${sunrise.minute}');
-  debugPrint('Dhuhr: ${dhuhr.hour}:${dhuhr.minute}');
-  debugPrint('Asr: ${asr.hour}:${asr.minute}');
-  debugPrint('Maghrib: ${maghrib.hour}:${maghrib.minute}');
-  debugPrint('Isha: ${isha.hour}:${isha.minute}');
-  debugPrint('Sunset: ${sunset.hour}:${sunset.minute}');
-  debugPrint('Midday: ${midday.hour}:${midday.minute}');
+  // debugPrint('⏰ Prayer Times (24-hour format):');
+  // debugPrint('Fajr: ${fajr.hour}:${fajr.minute}');
+  // debugPrint('Sunrise: ${sunrise.hour}:${sunrise.minute}');
+  // debugPrint('Dhuhr: ${dhuhr.hour}:${dhuhr.minute}');
+  // debugPrint('Asr: ${asr.hour}:${asr.minute}');
+  // debugPrint('Maghrib: ${maghrib.hour}:${maghrib.minute}');
+  // debugPrint('Isha: ${isha.hour}:${isha.minute}');
+  // debugPrint('Sunset: ${sunset.hour}:${sunset.minute}');
+  // debugPrint('Midday: ${midday.hour}:${midday.minute}');
 
-
-
-  debugPrint('WAQTO PRINTED');
-  debugPrint(fajrWaqt.toString());
-  debugPrint(johorWaqt.toString());
-  debugPrint(asorWaqt.toString());
-  debugPrint(magribWaqt.toString());
-  debugPrint(ishaWaqt.toString());
+  // debugPrint('WAQTO PRINTED');
+  // debugPrint(fajrWaqt.toString());
+  // debugPrint(johorWaqt.toString());
+  // debugPrint(asorWaqt.toString());
+  // debugPrint(magribWaqt.toString());
+  // debugPrint(ishaWaqt.toString());
 
   // 1. Check forbidden time after sunrise (15 minutes)
 
@@ -214,24 +215,46 @@ String checkWaqto(PrayerTimes prayerTimes) {
   }
 
   // Check regular prayer times
-  if (isAfter(currentTime, fajr) && isBefore(currentTime, sunrise)) {
+   if (isAfter(currentTime, fajr) && isBefore(currentTime, sunrise)) {
     return 'Fajr';
   }
-  if (isAfter(currentTime, dhuhr) && isBefore(currentTime, asr)) {
+   if (isAfter(currentTime, israk) && isBefore(currentTime,middayForbiddenStart)) {
+    return 'Israk';
+  }
+   if (isAfter(currentTime, dhuhr) && isBefore(currentTime, asr)) {
     return 'Johor';
   }
-  if (isAfter(currentTime, asr) && isBefore(currentTime, sunset)) {
+   if (isAfter(currentTime, asr) && isBefore(currentTime, sunset)) {
     return 'Asor';
   }
-  if (isAfter(currentTime, sunset) && isBefore(currentTime, isha)) {
+   if (isAfter(currentTime, sunset) && isBefore(currentTime, isha)) {
     return 'Magrib';
   }
-  if (isAfter(currentTime, isha) && isBefore(currentTime, midNight)) {
+   if (isAfter(currentTime, isha) && isBefore(currentTime, midNight)) {
     return 'Isha';
   } else {
     return 'Wait for Next Prayer Time';
   }
 }
+
+Future<void> saveCounter() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  await preferences.setBool(isSchedule, true);
+}
+
+Future<bool?> getCounter() async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  final isScheduled = preferences.getBool(isSchedule);
+  if (isScheduled != null) {
+    debugPrint('Scheduled? $isScheduled');
+    debugPrint('LOCAL STORAGE SCHEDULED OR NOT');
+
+    return isScheduled;
+  }
+  return null;
+}
+
 // Helper function to compare TimeOfDay objects
 // bool _isAfter(TimeOfDay current, TimeOfDay reference) {
 //   return current.hour > reference.hour ||

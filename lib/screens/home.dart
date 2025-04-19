@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -34,9 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void updateTime() {
     Timer.periodic(Duration(milliseconds: 500), (timer) {
       if (mounted) {
-        setState(() {
-         
-        });
+        setState(() {});
       }
     });
   }
@@ -86,8 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ApiIntegrationSuccessState) {
               final waqto = checkWaqto(state.prayerTimes!);
-              debugPrint('________________________');
-              debugPrint(waqto);
+              // debugPrint('________________________');
+              // debugPrint(waqto);
               final String sunriseAdd = addMinutesFromTime(
                 state.prayerTimes!.sunrise.toString(),
                 15,
@@ -103,8 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 15,
               );
 
-              debugPrint(middaySub);
-              debugPrint(sunsetSub);
+              // debugPrint(middaySub);
+              // debugPrint(sunsetSub);
               return Column(
                 children: [
                   // Header
@@ -200,15 +199,24 @@ class _HomeScreenState extends State<HomeScreen> {
       'asor': asr,
       'magrib': magrib,
       'isha': isha,
+      'israk': prayerTimes.israk,
     };
+    final isSchedulAlarm = await getCounter();
+    if (isSchedulAlarm == null || isSchedulAlarm == false) {
+      await AlarmService.schedulePrayerAlarms(times);
+      await saveCounter();
+      debugPrint('SCHEDULED ALARM FOR ALL PRAYER');
+    } else {
+      debugPrint('SKIPPING SCHEDULE TIME ');
+    }
 
-    await AlarmService.schedulePrayerAlarms(times);
-    debugPrint(' All prayer alarms scheduled successfully');
-    debugPrint('ALARM TIME @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-    debugPrint(fajr);
-    debugPrint(johor);
-    debugPrint(asr);
-    debugPrint(magrib);
-    debugPrint(isha);
+    // debugPrint(' All prayer alarms scheduled successfully');
+    // debugPrint('ALARM TIME @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+    // debugPrint(fajr);
+    // debugPrint(johor);
+    // debugPrint(asr);
+    // debugPrint(magrib);
+    // debugPrint(isha);
+    // debugPrint(prayerTimes.israk);
   }
 }
